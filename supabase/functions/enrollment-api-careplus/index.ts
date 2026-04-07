@@ -247,16 +247,16 @@ async function insertCareplusLogSafe(
       externalResponse: params.externalResponse ?? null,
     };
 
-    const { error } = await supabase.from("careplus_log").insert({
+    const { error } = await supabase.from("premiumCare_log").insert({
       log: JSON.stringify(logObj),
       request_payload: requestPayload,
       payload_size_bytes: payloadSizeBytes,
     });
     if (error) {
-      console.error("[careplus_log] insert failed:", error.message);
+      console.error("[premiumCare_log] insert failed:", error.message);
     }
   } catch (e) {
-    console.error("[careplus_log] insert exception:", e);
+    console.error("[premiumCare_log] insert exception:", e);
   }
 }
 

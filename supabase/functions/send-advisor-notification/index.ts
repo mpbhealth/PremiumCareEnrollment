@@ -81,7 +81,7 @@ Deno.serve(async (req: Request) => {
     });
 
     const advisorFirstName = advisor.fname || advisor.advisor_name?.split(" ")[0] || "Advisor";
-    const formName = planName || "Care+";
+    const formName = planName || "Premium Care";
 
     const emailHtml = `
 <!DOCTYPE html>
@@ -176,7 +176,7 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         from: "MPB Health <system@mpb.health>",
         to: [advisor.email],
-        subject: "New Care+ Enrollment Notification",
+        subject: "New Premium Care Enrollment Notification",
         html: emailHtml,
       }),
     });

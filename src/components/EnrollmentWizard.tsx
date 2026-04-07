@@ -398,14 +398,14 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
       const carePlusPricing = getCarePlusPricingOptions(formData.dob, formData.dependents);
       if (!carePlusPricing.isAvailable) {
         setErrors({
-          essentialPlan: carePlusPricing.errorMessage || 'Invalid Care+ plan configuration',
+          essentialPlan: carePlusPricing.errorMessage || 'Invalid Premium Care plan configuration',
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
       if (!carePlusProduct.selectedPlan) {
         setErrors({
-          essentialPlan: 'Please select an IUA level for your Care+ membership',
+          essentialPlan: 'Please select an IUA level for your Premium Care membership',
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
@@ -929,7 +929,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
           customerFirstName: formData.firstName,
           customerLastName: formData.lastName,
           customerEmail: formData.email,
-          planName: 'Care+',
+          planName: 'Premium Care',
         }),
       });
 
@@ -1039,7 +1039,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
       <div className="bg-white rounded-lg shadow-lg px-3 py-6 xs:p-8">
         <div className="mb-8 text-center">
           <img src="/assets/MPB-Health-No-background.png" alt="MPB Health Logo" className="h-16 xs:h-20 w-auto mx-auto mb-4" />
-          <h1 className="text-xl xs:text-2xl md:text-3xl font-bold text-gray-900">Care+ Enrollment</h1>
+          <h1 className="text-xl xs:text-2xl md:text-3xl font-bold text-gray-900">Premium Care Enrollment</h1>
         </div>
 
         <ProgressIndicator currentStep={currentStep} totalSteps={3} />
