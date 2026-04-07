@@ -123,7 +123,7 @@ const createDefaultFormData = (benefitId: string | null, agentId: string = ''): 
       {
         id: 'care-plus',
         name: 'Premium Care',
-        image: '/assets/careplus.png',
+        image: '/assets/premiumcare.png',
         selectedPlan: 'member-only',
         enrollmentFee: 0.00,
         recurringFee: 0,
