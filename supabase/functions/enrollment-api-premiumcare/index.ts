@@ -207,7 +207,7 @@ function buildClearPayloadForLog(data: Record<string, unknown>): Record<string, 
   }
 }
 
-async function insertCareplusLogSafe(
+async function insertPremiumCareLogSafe(
   supabase: ReturnType<typeof createClient>,
   params: {
     agentNumber: number;
@@ -806,7 +806,7 @@ Deno.serve(async (req: Request) => {
     );
 
     } finally {
-      await insertCareplusLogSafe(supabase, {
+      await insertPremiumCareLogSafe(supabase, {
         agentNumber,
         rawData,
         externalResponse: externalResponseData,

@@ -1,5 +1,5 @@
 /*
-  # premiumCare_log — enrollment-api premium care request/response audit
+  # premiumCare_log — enrollment-api-premiumcare request/response audit
 
   - created_at: when the request was processed
   - log: JSON text (outcome, HTTP status, external API snippet, errors — no masking)

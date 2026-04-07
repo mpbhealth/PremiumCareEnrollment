@@ -93,7 +93,7 @@ export default function EnrollmentForm() {
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const apiUrl = `${supabaseUrl}/functions/v1/enrollment-api-careplus`;
+      const apiUrl = `${supabaseUrl}/functions/v1/enrollment-api-premiumcare`;
 
       const res = await fetch(apiUrl, {
         method: 'POST',

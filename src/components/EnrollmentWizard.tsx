@@ -654,7 +654,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const zohoUrl = `${supabaseUrl}/functions/v1/zoho-sync-contact_careplus`;
+      const zohoUrl = `${supabaseUrl}/functions/v1/zoho-sync-contact_premiumcare`;
       const zohoPayload: Record<string, unknown> = {
         firstName: requestBody.firstName,
         lastName: requestBody.lastName,
@@ -723,7 +723,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       const agentParam = formData.agent || agentId || '768413';
-      const apiUrl = `${supabaseUrl}/functions/v1/enrollment-api-careplus?id=${agentParam}`;
+      const apiUrl = `${supabaseUrl}/functions/v1/enrollment-api-premiumcare?id=${agentParam}`;
 
       const carePlusProduct = formData.products.find(p => p.id === 'care-plus');
       const benefitIdToSend = carePlusProduct?.extractedBenefitId || formData.benefitId;
@@ -942,7 +942,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const gatewayApiUrl = `${supabaseUrl}/functions/v1/gateway-member-api-careplus`;
+      const gatewayApiUrl = `${supabaseUrl}/functions/v1/gateway-member-api-premiumcare`;
 
       const gatewayResponse = await fetch(gatewayApiUrl, {
         method: 'POST',
