@@ -33,48 +33,57 @@ export interface BenefitPlan {
 export interface CarePlusPricing {
   productId: string;
   price: number;
-  iuaLevel: '1000' | '1250' | '2500' | '5000';
-  ageRange: '18-29' | '30-49' | '50-64';
+  iuaLevel: '500' | '1000' | '1500' | '2500' | '5000';
+  ageRange: '18-29' | '30-64';
   coverageType: 'Member Only' | 'Member + Spouse' | 'Member + Children' | 'Member + Family';
 }
 
+/** Monthly premiums from rate sheet (productId = benefit ID). Age bands: 18–29 and 30–64. */
 export const CARE_PLUS_PRICING: CarePlusPricing[] = [
-  { productId: '10334', price: 268.00, iuaLevel: '1250', ageRange: '18-29', coverageType: 'Member Only' },
-  { productId: '10334', price: 298.00, iuaLevel: '1250', ageRange: '30-49', coverageType: 'Member Only' },
-  { productId: '10334', price: 381.00, iuaLevel: '1250', ageRange: '50-64', coverageType: 'Member Only' },
-  { productId: '10335', price: 467.00, iuaLevel: '1250', ageRange: '18-29', coverageType: 'Member + Spouse' },
-  { productId: '10335', price: 494.00, iuaLevel: '1250', ageRange: '30-49', coverageType: 'Member + Spouse' },
-  { productId: '10335', price: 668.00, iuaLevel: '1250', ageRange: '50-64', coverageType: 'Member + Spouse' },
-  { productId: '10336', price: 467.00, iuaLevel: '1250', ageRange: '18-29', coverageType: 'Member + Children' },
-  { productId: '10336', price: 494.00, iuaLevel: '1250', ageRange: '30-49', coverageType: 'Member + Children' },
-  { productId: '10336', price: 668.00, iuaLevel: '1250', ageRange: '50-64', coverageType: 'Member + Children' },
-  { productId: '10337', price: 702.00, iuaLevel: '1250', ageRange: '18-29', coverageType: 'Member + Family' },
-  { productId: '10337', price: 713.00, iuaLevel: '1250', ageRange: '30-49', coverageType: 'Member + Family' },
-  { productId: '10337', price: 947.00, iuaLevel: '1250', ageRange: '50-64', coverageType: 'Member + Family' },  
-  { productId: '3279', price: 203.00, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member Only' },
-  { productId: '3279', price: 216.00, iuaLevel: '2500', ageRange: '30-49', coverageType: 'Member Only' },
-  { productId: '3279', price: 318.00, iuaLevel: '2500', ageRange: '50-64', coverageType: 'Member Only' },
-  { productId: '3285', price: 344.00, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Spouse' },
-  { productId: '3285', price: 387.00, iuaLevel: '2500', ageRange: '30-49', coverageType: 'Member + Spouse' },
-  { productId: '3285', price: 537.00, iuaLevel: '2500', ageRange: '50-64', coverageType: 'Member + Spouse' },
-  { productId: '3290', price: 344.00, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Children' },
-  { productId: '3290', price: 387.00, iuaLevel: '2500', ageRange: '30-49', coverageType: 'Member + Children' },
-  { productId: '3290', price: 537.00, iuaLevel: '2500', ageRange: '50-64', coverageType: 'Member + Children' },
-  { productId: '3295', price: 563.00, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Family' },
-  { productId: '3295', price: 575.00, iuaLevel: '2500', ageRange: '30-49', coverageType: 'Member + Family' },
-  { productId: '3295', price: 748.00, iuaLevel: '2500', ageRange: '50-64', coverageType: 'Member + Family' },
-  { productId: '3278', price: 166.00, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member Only' },
-  { productId: '3278', price: 193.00, iuaLevel: '5000', ageRange: '30-49', coverageType: 'Member Only' },
-  { productId: '3278', price: 247.00, iuaLevel: '5000', ageRange: '50-64', coverageType: 'Member Only' },
-  { productId: '3286', price: 284.00, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Spouse' },
-  { productId: '3286', price: 341.00, iuaLevel: '5000', ageRange: '30-49', coverageType: 'Member + Spouse' },
-  { productId: '3286', price: 442.00, iuaLevel: '5000', ageRange: '50-64', coverageType: 'Member + Spouse' },
-  { productId: '3291', price: 284.00, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Children' },
-  { productId: '3291', price: 341.00, iuaLevel: '5000', ageRange: '30-49', coverageType: 'Member + Children' },
-  { productId: '3291', price: 442.00, iuaLevel: '5000', ageRange: '50-64', coverageType: 'Member + Children' },
-  { productId: '3296', price: 445.00, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Family' },
-  { productId: '3296', price: 503.00, iuaLevel: '5000', ageRange: '30-49', coverageType: 'Member + Family' },
-  { productId: '3296', price: 647.00, iuaLevel: '5000', ageRange: '50-64', coverageType: 'Member + Family' },
+  { productId: '3277', price: 296.0, iuaLevel: '500', ageRange: '18-29', coverageType: 'Member Only' },
+  { productId: '3277', price: 409.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member Only' },
+  { productId: '3281', price: 249.0, iuaLevel: '1000', ageRange: '18-29', coverageType: 'Member Only' },
+  { productId: '3281', price: 299.0, iuaLevel: '1000', ageRange: '30-64', coverageType: 'Member Only' },
+  { productId: '3280', price: 223.0, iuaLevel: '1500', ageRange: '18-29', coverageType: 'Member Only' },
+  { productId: '3280', price: 267.0, iuaLevel: '1500', ageRange: '30-64', coverageType: 'Member Only' },
+  { productId: '3279', price: 206.0, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member Only' },
+  { productId: '3279', price: 246.0, iuaLevel: '2500', ageRange: '30-64', coverageType: 'Member Only' },
+  { productId: '3278', price: 194.0, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member Only' },
+  { productId: '3278', price: 230.0, iuaLevel: '5000', ageRange: '30-64', coverageType: 'Member Only' },
+
+  { productId: '3282', price: 673.0, iuaLevel: '500', ageRange: '18-29', coverageType: 'Member + Spouse' },
+  { productId: '3282', price: 856.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member + Spouse' },
+  { productId: '3283', price: 535.0, iuaLevel: '1000', ageRange: '18-29', coverageType: 'Member + Spouse' },
+  { productId: '3283', price: 603.0, iuaLevel: '1000', ageRange: '30-64', coverageType: 'Member + Spouse' },
+  { productId: '3284', price: 479.0, iuaLevel: '1500', ageRange: '18-29', coverageType: 'Member + Spouse' },
+  { productId: '3284', price: 532.0, iuaLevel: '1500', ageRange: '30-64', coverageType: 'Member + Spouse' },
+  { productId: '3285', price: 429.0, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Spouse' },
+  { productId: '3285', price: 487.0, iuaLevel: '2500', ageRange: '30-64', coverageType: 'Member + Spouse' },
+  { productId: '3286', price: 396.0, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Spouse' },
+  { productId: '3286', price: 461.0, iuaLevel: '5000', ageRange: '30-64', coverageType: 'Member + Spouse' },
+
+  { productId: '3287', price: 599.0, iuaLevel: '500', ageRange: '18-29', coverageType: 'Member + Children' },
+  { productId: '3287', price: 783.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member + Children' },
+  { productId: '3288', price: 481.0, iuaLevel: '1000', ageRange: '18-29', coverageType: 'Member + Children' },
+  { productId: '3288', price: 558.0, iuaLevel: '1000', ageRange: '30-64', coverageType: 'Member + Children' },
+  { productId: '3289', price: 433.0, iuaLevel: '1500', ageRange: '18-29', coverageType: 'Member + Children' },
+  { productId: '3289', price: 497.0, iuaLevel: '1500', ageRange: '30-64', coverageType: 'Member + Children' },
+  { productId: '3290', price: 387.0, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Children' },
+  { productId: '3290', price: 454.0, iuaLevel: '2500', ageRange: '30-64', coverageType: 'Member + Children' },
+  { productId: '3291', price: 363.0, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Children' },
+  { productId: '3291', price: 427.0, iuaLevel: '5000', ageRange: '30-64', coverageType: 'Member + Children' },
+
+  { productId: '3292', price: 988.0, iuaLevel: '500', ageRange: '18-29', coverageType: 'Member + Family' },
+  // 3292 / age 30–64 obscured in sheet; 1091 ≈ 988 × (877/794) from $1000 tier — confirm official rate.
+  { productId: '3292', price: 1091.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member + Family' },
+  { productId: '3293', price: 794.0, iuaLevel: '1000', ageRange: '18-29', coverageType: 'Member + Family' },
+  { productId: '3293', price: 877.0, iuaLevel: '1000', ageRange: '30-64', coverageType: 'Member + Family' },
+  { productId: '3294', price: 711.0, iuaLevel: '1500', ageRange: '18-29', coverageType: 'Member + Family' },
+  { productId: '3294', price: 777.0, iuaLevel: '1500', ageRange: '30-64', coverageType: 'Member + Family' },
+  { productId: '3295', price: 630.0, iuaLevel: '2500', ageRange: '18-29', coverageType: 'Member + Family' },
+  { productId: '3295', price: 712.0, iuaLevel: '2500', ageRange: '30-64', coverageType: 'Member + Family' },
+  { productId: '3296', price: 584.0, iuaLevel: '5000', ageRange: '18-29', coverageType: 'Member + Family' },
+  { productId: '3296', price: 670.0, iuaLevel: '5000', ageRange: '30-64', coverageType: 'Member + Family' },
 ];
 
 export const BENEFIT_PLANS: Record<string, BenefitPlan> = {
@@ -243,10 +252,9 @@ export function calculateAgeFromDOB(dob: string): number | null {
   return age;
 }
 
-function getAgeRange(age: number): '18-29' | '30-49' | '50-64' | null {
+function getAgeRange(age: number): '18-29' | '30-64' | null {
   if (age >= 18 && age <= 29) return '18-29';
-  if (age >= 30 && age <= 49) return '30-49';
-  if (age >= 50 && age <= 64) return '50-64';
+  if (age >= 30 && age <= 64) return '30-64';
   return null;
 }
 
@@ -288,6 +296,9 @@ export function getCarePlusPricingOptions(memberDOB: string, dependents: Depende
   const matchingPrices = CARE_PLUS_PRICING.filter(
     p => p.ageRange === ageRange && p.coverageType === coverageType
   );
+
+  const iuaOrder: Record<string, number> = { '500': 0, '1000': 1, '1500': 2, '2500': 3, '5000': 4 };
+  matchingPrices.sort((a, b) => iuaOrder[a.iuaLevel] - iuaOrder[b.iuaLevel]);
 
   if (matchingPrices.length === 0) {
     return {
