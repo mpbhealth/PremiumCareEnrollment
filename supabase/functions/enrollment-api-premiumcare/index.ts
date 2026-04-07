@@ -704,7 +704,7 @@ Deno.serve(async (req: Request) => {
       })),
       PRODUCTS: [
         {
-          PDID: (requestData.pdid && requestData.pdid > 0) ? requestData.pdid : 42464,
+          PDID: (requestData.pdid && requestData.pdid > 0) ? requestData.pdid : 43957,
           BENEFITID: parseInt(requestData.benefitId),
           periodid: 1,
           dtEffective: formatDateToMMDDYYYY(requestData.effectiveDate),
