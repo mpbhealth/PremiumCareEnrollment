@@ -74,8 +74,7 @@ export const CARE_PLUS_PRICING: CarePlusPricing[] = [
   { productId: '3291', price: 427.0, iuaLevel: '5000', ageRange: '30-64', coverageType: 'Member + Children' },
 
   { productId: '3292', price: 988.0, iuaLevel: '500', ageRange: '18-29', coverageType: 'Member + Family' },
-  // 3292 / age 30–64 obscured in sheet; 1091 ≈ 988 × (877/794) from $1000 tier — confirm official rate.
-  { productId: '3292', price: 1091.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member + Family' },
+  { productId: '3292', price: 1225.0, iuaLevel: '500', ageRange: '30-64', coverageType: 'Member + Family' },
   { productId: '3293', price: 794.0, iuaLevel: '1000', ageRange: '18-29', coverageType: 'Member + Family' },
   { productId: '3293', price: 877.0, iuaLevel: '1000', ageRange: '30-64', coverageType: 'Member + Family' },
   { productId: '3294', price: 711.0, iuaLevel: '1500', ageRange: '18-29', coverageType: 'Member + Family' },
