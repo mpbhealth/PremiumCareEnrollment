@@ -11,8 +11,10 @@ interface QuestionnaireAnswers {
   zionTimelySubmission: string;
   zionmh1: string;
   zionmh2P: string;
+  maternityDeliveryAck: string;
   zionmh2: string;
   zionmh3: string;
+  primaryMemberConditionsPast36Mo: string;
   primaryMedicalTreatments: string;
   spouseMedicalConditions: string;
   medicalCostSharingAuth: boolean;
@@ -221,12 +223,19 @@ export default function Step2Questionnaire({
           Membership Principles
         </legend>
 
-        <div className="space-y-4">
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">Understanding Zion HealthShare Principles of Membership</p>
-            <p className="text-sm text-gray-700 leading-relaxed mb-4">
-              Adherence to the Zion HealthShare Principles of Membership minimizes medical risks, encourages good health practices, and ensures member integrity and accountability. Our members must comply with certain requirements to maintain membership and remain eligible to participate in our medical cost sharing community. Zion HealthShare members are expected to act with honor and integrity. Members should not falsify a sharing request, medical records, or use other deceptive practices. If a member abuses the trust of our community, their membership may be revoked or withdrawn.
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <p className="font-semibold text-gray-900">Understanding Sedera Principles of Membership</p>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              I/We commit to living according to the Sedera Member Principles, including:
             </p>
+            <ul className="text-sm text-gray-700 leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li>Acting with honesty, integrity, and ethical behavior.</li>
+              <li>Supporting fellow members through voluntary sharing of medical costs whenever possible.</li>
+              <li>Maintaining personal accountability and acting as good stewards of community resources.</li>
+              <li>Treating family, friends, and others with care, respect, and compassion.</li>
+              <li>Practicing healthy lifestyle choices, avoiding illegal substances, and pursuing a balanced, harmonious life.</li>
+            </ul>
 
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -238,7 +247,7 @@ export default function Step2Questionnaire({
                   onChange={(e) => handleRadioChange('zionPrinciplesAccept', e.target.value)}
                   className="w-4 h-4 text-blue-600"
                 />
-                <span className="text-sm text-gray-700">I accept Zion Principles</span>
+                <span className="text-sm text-gray-700">YES</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -249,21 +258,30 @@ export default function Step2Questionnaire({
                   onChange={(e) => handleRadioChange('zionPrinciplesAccept', e.target.value)}
                   className="w-4 h-4 text-blue-600"
                 />
-                <span className="text-sm text-gray-700">I don't accept Zion Principles</span>
+                <span className="text-sm text-gray-700">NO</span>
               </label>
             </div>
             {errors.zionPrinciplesAccept && (
               <p className="mt-2 text-sm text-red-500">{errors.zionPrinciplesAccept}</p>
             )}
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              1. I believe that a community of ethical, health-conscious people can most effectively care for one another by directly sharing the costs associated with each other's healthcare needs. I acknowledge that Zion HealthShare affiliates itself with, and considers itself accountable to, a higher power. I recognize that Zion HealthShare welcomes members of all faiths.
-              <span className="text-red-500 ml-1">*</span>
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              I, as the Primary Member, approve this membership commitment for myself and all household members listed on this
+              application.
             </p>
+            <p className="font-semibold text-gray-900">I understand that:</p>
+            <ul className="text-sm text-gray-700 leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li>This membership is not insurance; it is a voluntary medical needs sharing program.</li>
+              <li>There are no guarantees that medical expenses will be shared.</li>
+              <li>Acceptance is a privilege based on the medical history I provide.</li>
+              <li>
+                Failure to follow the Member Principles or Commitments may result in ineligible sharing or inactive membership.
+              </li>
+              <li>Membership Guidelines in effect on the date of service govern eligibility.</li>
+              <li>Monthly contributions are voluntary and may change based on operating costs.</li>
+            </ul>
 
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -292,11 +310,15 @@ export default function Step2Questionnaire({
             {errors.zionm1a && <p className="mt-2 text-sm text-red-500">{errors.zionm1a}</p>}
           </div>
 
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              2. I understand that Zion HealthShare is a benevolent organization, not an insurance entity, and that Zion HealthShare cannot guarantee payment of medical expenses.
-              <span className="text-red-500 ml-1">*</span>
-            </p>
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <p className="font-semibold text-gray-900">Dispute Resolution &amp; Responsibility</p>
+            <ul className="text-sm text-gray-700 leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li>
+                I agree to resolve disputes through mediation and binding arbitration as described in the Membership Guidelines.
+              </li>
+              <li>I understand it is my responsibility to submit medical bills within 6 months of the date of service.</li>
+              <li>I agree to hold Sedera harmless and not pursue legal claims over sharing decisions.</li>
+            </ul>
 
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -325,11 +347,20 @@ export default function Step2Questionnaire({
             {errors.zionm1b && <p className="mt-2 text-sm text-red-500">{errors.zionm1b}</p>}
           </div>
 
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              3. I will practice good health measures and strive for a balanced lifestyle. I agree to abstain from the use of any illicit or illegal drugs and refrain from excessive alcohol consumption, acts which are harmful to the body. I understand that members who use tobacco will have an increased monthly contribution (per household membership) of $50.
-              <span className="text-red-500 ml-1">*</span>
-            </p>
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <p className="font-semibold text-gray-900">Acknowledgements &amp; State Notices</p>
+            <ul className="text-sm text-gray-700 leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li>I understand Sedera is a faith-based, nonprofit organization, not an insurance company.</li>
+              <li>I acknowledge that membership is subject to any state-specific legal notices or disclaimers.</li>
+              <li>
+                I confirm my billing information is correct and authorize Sedera to process monthly contributions per the Escrow
+                Instructions.
+              </li>
+              <li>
+                I have read and understand the current Membership Guidelines and accept them as the governing document for
+                determining eligibility of medical needs.
+              </li>
+            </ul>
 
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -357,77 +388,6 @@ export default function Step2Questionnaire({
             </div>
             {errors.zionm1d && <p className="mt-2 text-sm text-red-500">{errors.zionm1d}</p>}
           </div>
-
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              4. I am obligated to care for my family. I believe that mental, physical, emotional, or other abuse of a family member, or any other person, is morally wrong. I am committed to always treating my family and others with care and respect.
-              <span className="text-red-500 ml-1">*</span>
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionm1h"
-                  value="Y"
-                  checked={answers.zionm1h === 'Y'}
-                  onChange={(e) => handleRadioChange('zionm1h', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">YES</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionm1h"
-                  value="N"
-                  checked={answers.zionm1h === 'N'}
-                  onChange={(e) => handleRadioChange('zionm1h', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">NO</span>
-              </label>
-            </div>
-            {errors.zionm1h && <p className="mt-2 text-sm text-red-500">{errors.zionm1h}</p>}
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              5. I agree to submit to mediation followed by subsequent binding arbitration, if needed, for any instance of a dispute with Zion HealthShare or its affiliates.
-              <span className="text-red-500 ml-1">*</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-3">
-              It is the members responsibility to ensure all medical bills submitted for sharing are submitted within 6 months of the date of service
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionTimelySubmission"
-                  value="Y"
-                  checked={answers.zionTimelySubmission === 'Y'}
-                  onChange={(e) => handleRadioChange('zionTimelySubmission', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">YES</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionTimelySubmission"
-                  value="N"
-                  checked={answers.zionTimelySubmission === 'N'}
-                  onChange={(e) => handleRadioChange('zionTimelySubmission', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">NO</span>
-              </label>
-            </div>
-            {errors.zionTimelySubmission && (
-              <p className="mt-2 text-sm text-red-500">{errors.zionTimelySubmission}</p>
-            )}
-          </div>
         </div>
       </fieldset>
 
@@ -436,67 +396,21 @@ export default function Step2Questionnaire({
 
         <div className="space-y-4">
           <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              Understanding of Pre-Existing Conditions.
-              <span className="text-red-500 ml-1">*</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-2">
-              I understand that Medical Needs that result from a condition that existed prior to membership are only shareable if the condition is:
-            </p>
-            <p className="text-sm text-gray-700 mb-3">
-              Fully cured and 24 months have passed without symptoms, treatment, or medication, even if the cause of the symptoms is unknown or misdiagnosed.
-            </p>
-            <p className="text-sm mb-3" style={{ color: '#9b0000' }}>
-              Examples of Pre-existing conditions include but are not limited to: epilepsy, cancer, lupus, COPD, Heart Disease etc. For detailed information, Refer to Membership Sharing Guidelines: https://zionhealth.org/membership-guidelines-partner-pages/
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionmh1"
-                  value="Y"
-                  checked={answers.zionmh1 === 'Y'}
-                  onChange={(e) => handleRadioChange('zionmh1', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">YES</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="zionmh1"
-                  value="N"
-                  checked={answers.zionmh1 === 'N'}
-                  onChange={(e) => handleRadioChange('zionmh1', e.target.value)}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="text-sm text-gray-700">NO</span>
-              </label>
-            </div>
-            {errors.zionmh1 && <p className="mt-2 text-sm text-red-500">{errors.zionmh1}</p>}
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              IMPORTANT! Limitations on Maternity and Delivery Needs
-              <span className="text-red-500 ml-1">*</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-2">
-              I understand Maternity sharing requests have a structured Initial Unshareable Amount (IUA) as follows:
-            </p>
-            <ul className="text-sm text-gray-700 mb-2 space-y-1 list-disc list-inside">
-              <li>Household Membership IUA: $1,000 (Standard Maternity IUA: $2,500)</li>
-              <li>Household Membership IUA: $2,500 (Standard Maternity IUA: $2,500)</li>
-              <li>Household Membership IUA: $5,000 (Standard Maternity IUA: $5,000)</li>
+            <p className="font-semibold text-gray-900 mb-3">I understand:</p>
+            <ul className="text-sm text-gray-700 list-disc list-inside space-y-2 mb-4">
+              <li>
+                I must provide accurate medical and pre-existing condition information for myself and all household members.
+              </li>
+              <li>Pre-existing conditions may have waiting periods or limitations for sharing.</li>
+              <li>
+                A pre-existing condition may only be shareable after 36 months of symptom-free, treatment-free, and
+                medication-free status before the membership start date.
+              </li>
+              <li>
+                Undisclosed medical conditions discovered after enrollment will be treated as if disclosed at the membership
+                start date.
+              </li>
             </ul>
-            <p className="text-sm text-gray-700 mb-3">
-              Expenses eligible for sharing may include prenatal care, postnatal care, and delivery. Any newborn expenses incurred after delivery are subject to a separate sharing request and IUA.
-            </p>
-            <p className="text-sm font-semibold mb-1" style={{ color: '#9b0000' }}>MATERNITY - WAITING PERIOD</p>
-            <p className="text-sm mb-3" style={{ color: '#9b0000' }}>
-              Maternity sharing requests are ineligible for sharing during the first six (6) months of membership. To be eligible for sharing, the conception date must occur after six (6) months of continuous membership, as confirmed by medical records. Members who intentionally misrepresent their conception dates may be subject to membership revocation. Household memberships enrolled through a company or employer are also NOT subject to the six (6)-month waiting period.
-            </p>
 
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -525,26 +439,33 @@ export default function Step2Questionnaire({
             {errors.zionmh2P && <p className="mt-2 text-sm text-red-500">{errors.zionmh2P}</p>}
           </div>
 
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              Understanding of Limitations on Pre-Existing Conditions
-              <span className="text-red-500 ml-1">*</span>
+          <div className="border-t border-gray-200 pt-6 space-y-4">
+            <p className="font-semibold text-gray-900">Maternity and Delivery Needs</p>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              I understand that maternity and delivery-related medical needs are subject to specific waiting periods and sharing
+              limitations.
             </p>
-            <p className="text-sm text-gray-700 mb-2">
-              I understand that Pre-existing conditions have a waiting or phase in period. Zion Health attempts to negotiate all medical bills received and many membership types include the PHCS network for pre-negotiated medical expenses.
-            </p>
-            <p className="text-sm mb-3" style={{ color: '#9b0000' }}>
-              1st Year of Membership – Waiting period of all pre-existing conditions. 2nd Year of Membership – Up to $25,000 of sharing for pre-existing conditions. 3rd Year of Membership – Up to $50,000 of sharing for pre-existing conditions. 4th Year of Membership and Beyond – Up to $125,000 of sharing for pre-existing conditions.
+            <p className="font-semibold text-gray-900 text-sm">These limitations may include:</p>
+            <ul className="text-sm text-gray-700 list-disc list-inside space-y-2">
+              <li>Waiting periods before maternity needs are eligible for sharing.</li>
+              <li>Certain pre-existing conditions related to pregnancy may delay or exclude sharing.</li>
+              <li>
+                Multiple pregnancies or complicated deliveries may have additional considerations under the Membership Guidelines.
+              </li>
+            </ul>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              I acknowledge that all maternity and delivery needs must comply with the current Membership Guidelines to be
+              considered for sharing.
             </p>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pt-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
-                  name="zionmh2"
+                  name="maternityDeliveryAck"
                   value="Y"
-                  checked={answers.zionmh2 === 'Y'}
-                  onChange={(e) => handleRadioChange('zionmh2', e.target.value)}
+                  checked={answers.maternityDeliveryAck === 'Y'}
+                  onChange={(e) => handleRadioChange('maternityDeliveryAck', e.target.value)}
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="text-sm text-gray-700">YES</span>
@@ -552,57 +473,66 @@ export default function Step2Questionnaire({
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
-                  name="zionmh2"
+                  name="maternityDeliveryAck"
                   value="N"
-                  checked={answers.zionmh2 === 'N'}
-                  onChange={(e) => handleRadioChange('zionmh2', e.target.value)}
+                  checked={answers.maternityDeliveryAck === 'N'}
+                  onChange={(e) => handleRadioChange('maternityDeliveryAck', e.target.value)}
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="text-sm text-gray-700">NO</span>
               </label>
             </div>
-            {errors.zionmh2 && <p className="mt-2 text-sm text-red-500">{errors.zionmh2}</p>}
-          </div>
-
-          <div>
-            <p className="font-semibold text-gray-900 mb-2">
-              Primary Member Medical Conditions
-              <span className="text-red-500 ml-1">*</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-2">
-              Has the primary member experienced symptoms of, been diagnosed with, or been treated for any condition within the past 24 months?
-            </p>
-            <p className="text-sm text-gray-600 mb-3">
-              *Note: A $25.00 annual fee is charged at the time of enrollment and each year thereafter. This fee covers your membership in the Mpowering Benefits Association, Inc.
-            </p>
-            <p className="text-sm mb-2" style={{ color: '#9b0000' }}>
-             Add the conditions below. For multiple conditions, separate each one on a new line. (If no conditions exist, enter NA)
-            </p>
-
-            <textarea
-              name="zionmh3"
-              value={answers.zionmh3}
-              onChange={(e) => handleRadioChange('zionmh3', e.target.value)}
-              rows={3}
-              maxLength={255}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                errors.zionmh3 ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="Enter medical conditions or NA"
-            />
-            {errors.zionmh3 && <p className="mt-2 text-sm text-red-500">{errors.zionmh3}</p>}
+            {errors.maternityDeliveryAck && (
+              <p className="mt-2 text-sm text-red-500">{errors.maternityDeliveryAck}</p>
+            )}
           </div>
 
           <div>
             <p className="font-semibold text-gray-900 mb-2">
               Primary Medical Treatments
+              <span className="text-red-500 ml-1">*</span>
             </p>
-            <p className="text-sm text-gray-700 mb-2">
-              If you have answered Yes please provide the date the treatment occurred and what type of treatment you received and/or the specific genetic defect / hereditary disease - one item per line.
+            <p className="text-sm text-gray-700 mb-3">
+              In the past 36 months prior to the membership start date, has the primary member experienced symptoms, been diagnosed
+              with, or been treated for any medical condition?
             </p>
-            <p className="text-sm text-gray-600 mb-3 italic">
-              EXAMPLE: January 2018 abdominal hernia surgery
+
+            <div className="flex flex-col gap-2 mb-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="primaryMemberConditionsPast36Mo"
+                  value="Y"
+                  checked={answers.primaryMemberConditionsPast36Mo === 'Y'}
+                  onChange={(e) => handleRadioChange('primaryMemberConditionsPast36Mo', e.target.value)}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-sm text-gray-700">Yes</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="primaryMemberConditionsPast36Mo"
+                  value="N"
+                  checked={answers.primaryMemberConditionsPast36Mo === 'N'}
+                  onChange={(e) => handleRadioChange('primaryMemberConditionsPast36Mo', e.target.value)}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-sm text-gray-700">No</span>
+              </label>
+            </div>
+            {errors.primaryMemberConditionsPast36Mo && (
+              <p className="mt-2 text-sm text-red-500">{errors.primaryMemberConditionsPast36Mo}</p>
+            )}
+
+            <p className="text-sm text-gray-700 mb-3">
+              If you have any pre-existing conditions or answered &ldquo;Yes&rdquo; to health history questions, please provide:
             </p>
+            <ul className="text-sm text-gray-700 list-disc list-inside space-y-1 mb-3">
+              <li>Date of treatment</li>
+              <li>Type of treatment</li>
+              <li>Specific genetic defect or hereditary disease (if applicable)</li>
+            </ul>
 
             <textarea
               name="primaryMedicalTreatments"
@@ -653,7 +583,14 @@ export default function Step2Questionnaire({
             </p>
             <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700 leading-relaxed">
-                Medical Cost Sharing is not insurance or an insurance policy nor is it offered through an insurance company. Medical Cost Sharing is not a discount healthcare program nor a discount health card program. Whether anyone chooses to assist you with your medical bills will be totally voluntary, as neither the organization nor any other member is liable for or may be compelled to make the payment of your medical bill. As such, medical cost sharing should never be considered to be insurance. Whether you receive any amounts for medical expenses and whether or not medical cost sharing continues to operate, you are always personally responsible for the payment of your own medical bills. Medical Cost Sharing is not subject to the regulatory requirements or consumer protections of your particular State's Insurance Code or Statutes.
+                Medical Cost Sharing is not insurance or an insurance policy nor is it offered through an insurance company.
+                Medical Cost Sharing is not a discount healthcare program nor a discount health card program. Whether anyone
+                chooses to assist you with your medical bills will be totally voluntary, as neither the organization nor any
+                other member is liable for or may be compelled to make the payment of your medical bill. As such, medical cost
+                sharing should never be considered to be insurance. Whether you receive any amounts for medical expenses and
+                whether or not medical cost sharing continues to operate, you are always personally responsible for the
+                payment of your own medical bills. Medical Cost Sharing is not subject to the regulatory requirements or
+                consumer protections of your particular State&apos;s Insurance Code or Statutes.
               </p>
             </div>
 

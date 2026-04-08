@@ -53,8 +53,10 @@ export interface QuestionnaireAnswers {
   zionTimelySubmission: string;
   zionmh1: string;
   zionmh2P: string;
+  maternityDeliveryAck: string;
   zionmh2: string;
   zionmh3: string;
+  primaryMemberConditionsPast36Mo: string;
   primaryMedicalTreatments: string;
   spouseMedicalConditions: string;
   medicalCostSharingAuth: boolean;
@@ -152,8 +154,10 @@ const createDefaultFormData = (benefitId: string | null, agentId: string = ''): 
       zionTimelySubmission: '',
       zionmh1: '',
       zionmh2P: '',
+      maternityDeliveryAck: '',
       zionmh2: '',
       zionmh3: '',
+      primaryMemberConditionsPast36Mo: '',
       primaryMedicalTreatments: '',
       spouseMedicalConditions: '',
       medicalCostSharingAuth: false,

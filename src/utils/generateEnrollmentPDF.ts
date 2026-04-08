@@ -278,20 +278,79 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
 
   const hasSpouse = formData.dependents.some(dep => dep.relationship === 'Spouse');
 
+  const sederaPrinciplesBlock =
+    'Understanding Sedera Principles of Membership\n\n' +
+    'I/We commit to living according to the Sedera Member Principles, including:\n\n' +
+    '• Acting with honesty, integrity, and ethical behavior.\n' +
+    '• Supporting fellow members through voluntary sharing of medical costs whenever possible.\n' +
+    '• Maintaining personal accountability and acting as good stewards of community resources.\n' +
+    '• Treating family, friends, and others with care, respect, and compassion.\n' +
+    '• Practicing healthy lifestyle choices, avoiding illegal substances, and pursuing a balanced, harmonious life.';
+
+  const sederaPrimaryMemberBlock =
+    'I, as the Primary Member, approve this membership commitment for myself and all household members listed on this application.\n\n' +
+    'I understand that:\n\n' +
+    '• This membership is not insurance; it is a voluntary medical needs sharing program.\n' +
+    '• There are no guarantees that medical expenses will be shared.\n' +
+    '• Acceptance is a privilege based on the medical history I provide.\n' +
+    '• Failure to follow the Member Principles or Commitments may result in ineligible sharing or inactive membership.\n' +
+    '• Membership Guidelines in effect on the date of service govern eligibility.\n' +
+    '• Monthly contributions are voluntary and may change based on operating costs.';
+
+  const sederaDisputeBlock =
+    'Dispute Resolution & Responsibility\n\n' +
+    '• I agree to resolve disputes through mediation and binding arbitration as described in the Membership Guidelines.\n' +
+    '• I understand it is my responsibility to submit medical bills within 6 months of the date of service.\n' +
+    '• I agree to hold Sedera harmless and not pursue legal claims over sharing decisions.';
+
+  const sederaAcknowledgementsBlock =
+    'Acknowledgements & State Notices\n\n' +
+    '• I understand Sedera is a faith-based, nonprofit organization, not an insurance company.\n' +
+    '• I acknowledge that membership is subject to any state-specific legal notices or disclaimers.\n' +
+    '• I confirm my billing information is correct and authorize Sedera to process monthly contributions per the Escrow Instructions.\n' +
+    '• I have read and understand the current Membership Guidelines and accept them as the governing document for determining eligibility of medical needs.';
+
+  const healthHistoryPreExistingBlock =
+    'I understand:\n\n' +
+    '• I must provide accurate medical and pre-existing condition information for myself and all household members.\n' +
+    '• Pre-existing conditions may have waiting periods or limitations for sharing.\n' +
+    '• A pre-existing condition may only be shareable after 36 months of symptom-free, treatment-free, and medication-free status before the membership start date.\n' +
+    '• Undisclosed medical conditions discovered after enrollment will be treated as if disclosed at the membership start date.';
+
+  const maternityDeliveryNeedsBlock =
+    'Maternity and Delivery Needs\n\n' +
+    'I understand that maternity and delivery-related medical needs are subject to specific waiting periods and sharing limitations.\n\n' +
+    'These limitations may include:\n\n' +
+    '• Waiting periods before maternity needs are eligible for sharing.\n' +
+    '• Certain pre-existing conditions related to pregnancy may delay or exclude sharing.\n' +
+    '• Multiple pregnancies or complicated deliveries may have additional considerations under the Membership Guidelines.\n\n' +
+    'I acknowledge that all maternity and delivery needs must comply with the current Membership Guidelines to be considered for sharing.';
+
+  const medicalCostSharingAuthBlock =
+    'Medical Cost Sharing is not insurance or an insurance policy nor is it offered through an insurance company. Medical Cost Sharing is not a discount healthcare program nor a discount health card program. Whether anyone chooses to assist you with your medical bills will be totally voluntary, as neither the organization nor any other member is liable for or may be compelled to make the payment of your medical bill. As such, medical cost sharing should never be considered to be insurance. Whether you receive any amounts for medical expenses and whether or not medical cost sharing continues to operate, you are always personally responsible for the payment of your own medical bills. Medical Cost Sharing is not subject to the regulatory requirements or consumer protections of your particular State\'s Insurance Code or Statutes.\n\n' +
+    'By checking this box, I acknowledge that I understand and agree to the authorization';
+
+  const primaryTreatments36MoQuestion =
+    'Primary Medical Treatments\n\nIn the past 36 months prior to the membership start date, has the primary member experienced symptoms, been diagnosed with, or been treated for any medical condition?';
+
+  const primaryTreatmentsDetailsBlock =
+    'Primary Medical Treatments (details)\n\n' +
+    'If you have any pre-existing conditions or answered "Yes" to health history questions, please provide:\n\n' +
+    '• Date of treatment\n' +
+    '• Type of treatment\n' +
+    '• Specific genetic defect or hereditary disease (if applicable)';
+
   const questionnaireData = [
-    ['Understanding Zion HealthShare Principles of Membership\n\nAdherence to the Zion HealthShare Principles of Membership minimizes medical risks, encourages good health practices, and ensures member integrity and accountability. Our members must comply with certain requirements to maintain membership and remain eligible to participate in our medical cost sharing community. Zion HealthShare members are expected to act with honor and integrity. Members should not falsify a sharing request, medical records, or use other deceptive practices. If a member abuses the trust of our community, their membership may be revoked or withdrawn.', formatAnswer(formData.questionnaireAnswers.zionPrinciplesAccept)],
-    ['I believe that a community of ethical, health-conscious people can most effectively care for one another by directly sharing the costs associated with each other\'s healthcare needs. I acknowledge that Zion HealthShare affiliates itself with, and considers itself accountable to, a higher power. I recognize that Zion HealthShare welcomes members of all faiths.', formatAnswer(formData.questionnaireAnswers.zionm1a)],
-    ['I understand that Zion HealthShare is a benevolent organization, not an insurance entity, and that Zion HealthShare cannot guarantee payment of medical expenses.', formatAnswer(formData.questionnaireAnswers.zionm1b)],
-    ['I will practice good health measures and strive for a balanced lifestyle. I agree to abstain from the use of any illicit or illegal drugs and refrain from excessive alcohol consumption, acts which are harmful to the body. I understand that members who use tobacco will have an increased monthly contribution (per household membership) of $50.', formatAnswer(formData.questionnaireAnswers.zionm1d)],
-    ['I am obligated to care for my family. I believe that mental, physical, emotional, or other abuse of a family member, or any other person, is morally wrong. I am committed to always treating my family and others with care and respect.', formatAnswer(formData.questionnaireAnswers.zionm1h)],
-    ['I agree to submit to mediation followed by subsequent binding arbitration, if needed, for any instance of a dispute with Zion HealthShare or its affiliates. It is the members responsibility to ensure all medical bills submitted for sharing are submitted within 6 months of the date of service.', formatAnswer(formData.questionnaireAnswers.zionTimelySubmission)],
-    ['Understanding of Pre-Existing Conditions: I understand that Medical Needs that result from a condition that existed prior to membership are only shareable if the condition is fully cured and 24 months have passed without symptoms, treatment, or medication, even if the cause of the symptoms is unknown or misdiagnosed.', formatAnswer(formData.questionnaireAnswers.zionmh1)],
-    ['IMPORTANT! Limitations on Maternity and Delivery Needs*\n\nI understand Maternity sharing requests have a structured Initial Unshareable Amount (IUA) as follows:\n\n- Household Membership IUA: $1,000 (Standard Maternity IUA: $2,500)\n- Household Membership IUA: $2,500 (Standard Maternity IUA: $2,500)\n- Household Membership IUA: $5,000 (Standard Maternity IUA: $5,000)\n\nExpenses eligible for sharing may include prenatal care, postnatal care, and delivery. Any newborn expenses incurred after delivery are subject to a separate sharing request and IUA.\n\nMATERNITY - WAITING PERIOD\n\nMaternity sharing requests are ineligible for sharing during the first six (6) months of membership. To be eligible for sharing, the conception date must occur after six (6) months of continuous membership, as confirmed by medical records. Members who intentionally misrepresent their conception dates may be subject to membership revocation. Household memberships enrolled through a company or employer are also NOT subject to the six (6)-month waiting period.', formatAnswer(formData.questionnaireAnswers.zionmh2P)],
-    ['Understanding of Limitations on Pre-Existing Conditions *\n\nI understand that Pre-existing conditions have a waiting or phase in period. Zion Health attempts to negotiate all medical bills received and many membership types include the PHCS network for pre-negotiated medical expenses.\n\n1st Year of Membership – Waiting period of all pre-existing conditions.\n2nd Year of Membership – Up to $25,000 of sharing for pre-existing conditions.\n3rd Year of Membership – Up to $50,000 of sharing for pre-existing conditions.\n4th Year of Membership and Beyond – Up to $125,000 of sharing for pre-existing conditions.', formatAnswer(formData.questionnaireAnswers.zionmh2)],
-    ['Primary Member Medical Conditions *\n\nHas the primary member experienced symptoms of, been diagnosed with, or been treated for any condition within the past 24 months?\n\n*Note: A $25.00 annual fee is charged at the time of enrollment and each year thereafter. This fee covers your membership in the Mpowering Benefits Association, Inc.', formData.questionnaireAnswers.zionmh3 || 'N/A'],
-    ['Primary Medical Treatments\n\nIf you have answered Yes please provide the date the treatment occurred and what type of treatment you received and/or the specific genetic defect / hereditary disease - one item per line.\n\nEXAMPLE: January 2018 abdominal hernia surgery', formData.questionnaireAnswers.primaryMedicalTreatments || 'N/A'],
+    [sederaPrinciplesBlock, formatAnswer(formData.questionnaireAnswers.zionPrinciplesAccept)],
+    [sederaPrimaryMemberBlock, formatAnswer(formData.questionnaireAnswers.zionm1a)],
+    [sederaDisputeBlock, formatAnswer(formData.questionnaireAnswers.zionm1b)],
+    [sederaAcknowledgementsBlock, formatAnswer(formData.questionnaireAnswers.zionm1d)],
+    [healthHistoryPreExistingBlock, formatAnswer(formData.questionnaireAnswers.zionmh2P)],
+    [maternityDeliveryNeedsBlock, formatAnswer(formData.questionnaireAnswers.maternityDeliveryAck ?? '')],
+    [primaryTreatments36MoQuestion, formatAnswer(formData.questionnaireAnswers.primaryMemberConditionsPast36Mo ?? '')],
+    [primaryTreatmentsDetailsBlock, formData.questionnaireAnswers.primaryMedicalTreatments || 'N/A'],
     ...(hasSpouse ? [['Spouse\'s Medical Conditions *\n\nHas the primary member\'s spouse experienced symptoms of, been diagnosed with, or been treated for any condition within the past 24 months?\n\nAdd conditions below. For multiple conditions, please add one per line. (If there are no conditions present, enter NA)', formData.questionnaireAnswers.spouseMedicalConditions || 'N/A']] : []),
-    ['Medical Cost Sharing Authorization: I acknowledge and understand that Medical Cost Sharing is not insurance and that I am always personally responsible for the payment of my own medical bills.', formData.questionnaireAnswers.medicalCostSharingAuth ? 'YES' : 'NO'],
+    [medicalCostSharingAuthBlock, formData.questionnaireAnswers.medicalCostSharingAuth ? 'YES' : 'NO'],
   ];
 
   autoTable(doc, {
