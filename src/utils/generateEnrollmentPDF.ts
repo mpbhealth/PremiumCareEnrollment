@@ -279,6 +279,7 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
   const hasSpouse = formData.dependents.some(dep => dep.relationship === 'Spouse');
 
   const sederaPrinciplesBlock =
+    'Membership Principles\n\n' +
     'Understanding Sedera Principles of Membership\n\n' +
     'I/We commit to living according to the Sedera Member Principles, including:\n\n' +
     '• Acting with honesty, integrity, and ethical behavior.\n' +
@@ -311,6 +312,7 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
     '• I have read and understand the current Membership Guidelines and accept them as the governing document for determining eligibility of medical needs.';
 
   const healthHistoryPreExistingBlock =
+    'Health History\n\n' +
     'I understand:\n\n' +
     '• I must provide accurate medical and pre-existing condition information for myself and all household members.\n' +
     '• Pre-existing conditions may have waiting periods or limitations for sharing.\n' +
@@ -351,6 +353,10 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
     [primaryTreatmentsDetailsBlock, formData.questionnaireAnswers.primaryMedicalTreatments || 'N/A'],
     ...(hasSpouse ? [['Spouse\'s Medical Conditions *\n\nHas the primary member\'s spouse experienced symptoms of, been diagnosed with, or been treated for any condition within the past 24 months?\n\nAdd conditions below. For multiple conditions, please add one per line. (If there are no conditions present, enter NA)', formData.questionnaireAnswers.spouseMedicalConditions || 'N/A']] : []),
     [medicalCostSharingAuthBlock, formData.questionnaireAnswers.medicalCostSharingAuth ? 'YES' : 'NO'],
+    [
+      'Referral (optional)\n\nAdd A Referral Or Leave It Blank',
+      (formData.questionnaireAnswers.referral || '').trim() || 'None provided',
+    ],
   ];
 
   autoTable(doc, {
