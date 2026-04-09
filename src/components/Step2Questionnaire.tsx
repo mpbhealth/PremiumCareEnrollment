@@ -634,16 +634,27 @@ export default function Step2Questionnaire({
         )}
       </fieldset>
 
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-6 text-center">
-        <a
-          href="https://zionhealthshare.org/privacy-policy/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg"
-        >
-          <FileText className="w-5 h-5" />
-          Privacy Policy | Zion HealthShare
-        </a>
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-6">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4">
+          <a
+            href="https://assets.ctfassets.net/01zqqfy0bb2m/BdCi3f2zO5AcFTHBLcNkJ/3cdf28f268d4186cc7550e11b11664c7/SELECT__Guidelines_-_Community_20231001.pdf?_gl=1*9vdyav*_gcl_au*NDc2NDEyMTY5LjE3NzU0OTM0MjY.*_ga*MzA0MTI0MTI0LjE3NzU0OTM0MjY.*_ga_YSMB7CNTCL*czE3NzU2NjAzNjYkbzMkZzAkdDE3NzU2NjAzNjYkajYwJGwwJGhw"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg text-center"
+          >
+            <FileText className="w-5 h-5 shrink-0" />
+            Sedera Guidelines
+          </a>
+          <a
+            href="https://sedera.com/legal/privacy-policy/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg text-center"
+          >
+            <FileText className="w-5 h-5 shrink-0" />
+            Sedera Legal - Privacy Policy
+          </a>
+        </div>
       </div>
 
       <fieldset className="border border-gray-300 rounded-lg p-6 space-y-6">
