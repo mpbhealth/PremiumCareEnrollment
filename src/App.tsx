@@ -124,7 +124,7 @@ function App() {
                   <button
                     type="button"
                     onClick={() => setPrivacyPolicyOpen(true)}
-                    className="text-blue-800 hover:text-blue-900 hover:underline font-medium"
+                    className="text-xs text-gray-500 hover:text-gray-600 hover:underline p-0 m-0 bg-transparent border-0 cursor-pointer font-normal"
                   >
                     Sedera Legal - Privacy Policy
                   </button>
