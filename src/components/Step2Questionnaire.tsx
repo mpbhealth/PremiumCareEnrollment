@@ -1,4 +1,4 @@
-import { FileText, ArrowLeft, PenTool } from 'lucide-react';
+import { FileText, ArrowLeft, PenTool, X, ExternalLink } from 'lucide-react';
 import { FormData } from '../hooks/useEnrollmentStorage';
 import { useRef, useState, useEffect } from 'react';
 
@@ -38,10 +38,27 @@ export default function Step2Questionnaire({
   onBack,
   onQuestionnaireChange,
 }: Step2QuestionnaireProps) {
+  const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera HealthShare Privacy Policy.pdf')}`;
+
   const answers = formData.questionnaireAnswers;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasDrawnSignature, setHasDrawnSignature] = useState(false);
+  const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+
+  useEffect(() => {
+    if (!guidelinesOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setGuidelinesOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [guidelinesOpen]);
   const pointsRef = useRef<{ x: number; y: number }[]>([]);
   const allStrokesRef = useRef<{ x: number; y: number }[][]>([]);
 
@@ -636,15 +653,14 @@ export default function Step2Questionnaire({
 
       <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4">
-          <a
-            href="https://assets.ctfassets.net/01zqqfy0bb2m/BdCi3f2zO5AcFTHBLcNkJ/3cdf28f268d4186cc7550e11b11664c7/SELECT__Guidelines_-_Community_20231001.pdf?_gl=1*9vdyav*_gcl_au*NDc2NDEyMTY5LjE3NzU0OTM0MjY.*_ga*MzA0MTI0MTI0LjE3NzU0OTM0MjY.*_ga_YSMB7CNTCL*czE3NzU2NjAzNjYkbzMkZzAkdDE3NzU2NjAzNjYkajYwJGwwJGhw"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => setGuidelinesOpen(true)}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg text-center"
           >
             <FileText className="w-5 h-5 shrink-0" />
             Sedera Guidelines
-          </a>
+          </button>
           <a
             href="https://sedera.com/legal/privacy-policy/"
             target="_blank"
@@ -656,6 +672,58 @@ export default function Step2Questionnaire({
           </a>
         </div>
       </div>
+
+      {guidelinesOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4">
+          <div
+            role="presentation"
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setGuidelinesOpen(false)}
+          />
+          <div
+            className="relative z-10 flex h-[722px] max-h-[90vh] w-[896px] max-w-[min(896px,calc(100vw-1rem))] min-h-0 flex-col overflow-hidden rounded-lg bg-white shadow-xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="guidelines-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
+              <h2
+                id="guidelines-title"
+                className="pr-2 text-lg font-semibold text-gray-900 sm:text-xl"
+              >
+                Sedera Guidelines
+              </h2>
+              <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+                <a
+                  href={GUIDELINES_PDF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-blue-800 hover:bg-blue-50"
+                >
+                  <ExternalLink className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">Open in new tab</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setGuidelinesOpen(false)}
+                  className="shrink-0 rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                  aria-label="Close guidelines"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 overflow-hidden p-2 sm:p-3">
+              <iframe
+                title="Sedera Guidelines PDF"
+                src={GUIDELINES_PDF}
+                className="h-full w-full rounded border border-gray-200"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <fieldset className="border border-gray-300 rounded-lg p-6 space-y-6">
         <legend className="text-xl font-semibold text-gray-800 px-2">
