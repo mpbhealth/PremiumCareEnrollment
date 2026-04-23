@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FormData } from '../hooks/useEnrollmentStorage';
 import { maskSSN, maskCardNumber, maskRoutingNumber, maskAccountNumber } from './maskingUtils';
+import { TOBACCO_MONTHLY_FEE_USD } from '../constants/pricing';
 
 async function loadImageAsBase64(imagePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -188,7 +189,9 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
     if (isVirtualCare) {
       smokerFee = '';
     } else {
-      smokerFee = (isSubscriberSmoker || hasDependentSmoker) ? '$50.00' : '$0.00';
+      smokerFee = (isSubscriberSmoker || hasDependentSmoker)
+        ? `$${TOBACCO_MONTHLY_FEE_USD.toFixed(2)}`
+        : '$0.00';
     }
 
     let planDisplay = product.selectedPlan || 'N/A';

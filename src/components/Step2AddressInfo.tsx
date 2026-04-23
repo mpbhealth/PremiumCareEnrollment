@@ -7,6 +7,7 @@ import DependentsAddressSection from './DependentsAddressSection';
 import PreExistingConditionsSection from './PreExistingConditionsSection';
 import PaymentInformationSection from './PaymentInformationSection';
 import { applyPromoDiscount } from '../utils/promoCodeService';
+import { TOBACCO_MONTHLY_FEE_USD } from '../constants/pricing';
 
 interface ApiResponse {
   success: boolean;
@@ -57,7 +58,6 @@ export default function Step2AddressInfo({
 
   const pricingSummary = useMemo(() => {
     const ONE_TIME_ENROLLMENT_FEE = 100;
-    const SMOKER_FEE = 50;
     const totalEnrollmentFee = formData.products.reduce((sum, p) => sum + (p.enrollmentFee || 0), 0);
     const totalAnnualFee = formData.products.reduce((sum, p) => sum + (p.annualFee || 0), 0);
 
@@ -67,7 +67,7 @@ export default function Step2AddressInfo({
     const subscriberIsSmoker = formData.smoker === 'Yes';
     const dependentIsSmoker = formData.dependents.some(d => d.smoker === 'Yes');
     const hasSmokerFee = subscriberIsSmoker || dependentIsSmoker;
-    const smokerFee = hasSmokerFee ? SMOKER_FEE : 0;
+    const smokerFee = hasSmokerFee ? TOBACCO_MONTHLY_FEE_USD : 0;
     const recurringMonthly = baseRecurringMonthly + smokerFee;
 
     const initialPaymentBeforeDiscount = totalEnrollmentFee + totalAnnualFee + ONE_TIME_ENROLLMENT_FEE;

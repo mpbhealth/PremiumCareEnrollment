@@ -4,6 +4,7 @@ import { Product, Dependent, AppliedPromo } from '../hooks/useEnrollmentStorage'
 import { calculateEssentialPricing, getCarePlusPricingOptions } from '../utils/pricingLogic';
 import { extractProductIdFromDropdown, extractPriceFromDropdown } from '../utils/formatters';
 import { validatePromoCode, applyPromoDiscount } from '../utils/promoCodeService';
+import { TOBACCO_MONTHLY_FEE_USD } from '../constants/pricing';
 
 interface EnrollmentSummaryProps {
   products: Product[];
@@ -119,7 +120,7 @@ export default function EnrollmentSummary({
 
   const isSubscriberSmoker = smoker === 'Yes';
   const hasDependentSmoker = dependents.some(dep => dep.smoker === 'Yes');
-  const tobaccoFee = (isSubscriberSmoker || hasDependentSmoker) ? 50.00 : 0;
+  const tobaccoFee = (isSubscriberSmoker || hasDependentSmoker) ? TOBACCO_MONTHLY_FEE_USD : 0;
 
   const baseInitialPayment = totalEnrollmentFee + totalAnnualFee + 100;
   const finalInitialPayment = applyPromoDiscount(baseInitialPayment, appliedPromo);
