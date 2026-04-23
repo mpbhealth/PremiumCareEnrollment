@@ -668,7 +668,7 @@ export default function Step2Questionnaire({
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg text-center"
           >
             <FileText className="w-5 h-5 shrink-0" />
-            Sedera Guidelines
+            Guidelines
           </button>
           <button
             type="button"
@@ -703,7 +703,7 @@ export default function Step2Questionnaire({
                 id="guidelines-title"
                 className="pr-2 text-lg font-semibold text-gray-900 sm:text-xl"
               >
-                Sedera Guidelines
+                Guidelines
               </h2>
               <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                 <a
@@ -727,7 +727,7 @@ export default function Step2Questionnaire({
             </div>
             <div className="min-h-0 flex-1 overflow-hidden p-2 sm:p-3">
               <iframe
-                title="Sedera Guidelines PDF"
+                title="Guidelines PDF"
                 src={GUIDELINES_PDF}
                 className="h-full w-full rounded border border-gray-200"
               />
