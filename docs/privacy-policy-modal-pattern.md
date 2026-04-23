@@ -98,13 +98,13 @@ Use this section to **replicate the same popup** in another project. Implementat
 
 ### PDF file and URL constant
 
-PremiumCare Enrollment points the **Sedera Guidelines** modal at the privacy-policy PDF on disk:
+PremiumCare Enrollment points the **Sedera Guidelines** modal at the guidelines PDF on disk:
 
-- On disk: **`public/assets/Sedera HealthShare Privacy Policy.pdf`**
+- On disk: **`public/assets/Sedera_-_Access_Membership_Guidelines_20221001.pdf`**
 - Constant used in code:
 
 ```ts
-const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera HealthShare Privacy Policy.pdf')}`;
+const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera_-_Access_Membership_Guidelines_20221001.pdf')}`;
 ```
 
 If you rename the file, change both the `public/assets/...` path and the string inside `encodeURIComponent(...)`.

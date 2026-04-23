@@ -38,7 +38,7 @@ export default function Step2Questionnaire({
   onBack,
   onQuestionnaireChange,
 }: Step2QuestionnaireProps) {
-  const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera HealthShare Privacy Policy.pdf')}`;
+  const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera_-_Access_Membership_Guidelines_20221001.pdf')}`;
 
   const answers = formData.questionnaireAnswers;
   const canvasRef = useRef<HTMLCanvasElement>(null);
