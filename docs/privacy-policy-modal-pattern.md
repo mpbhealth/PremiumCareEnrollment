@@ -8,7 +8,7 @@ Works for any document type — privacy policies, guidelines, terms of service, 
 
 1. A PDF in static assets (served as a normal URL, no import bundling required).
 2. A button that opens a modal.
-3. The modal title (e.g. `Privacy Policy | <Brand>`, `Sedera Guidelines`).
+3. The modal title (e.g. `Sedera Guidelines`, `Privacy Policy | <Brand>`).
 4. The PDF shown inside the modal (typically an `<iframe src="...">`).
 
 ## 1. Add the file
@@ -36,7 +36,7 @@ Switch to a **button** with `type="button"` (avoids submitting forms) and `onCli
 
 ## 3. State and effects (recommended)
 
-- **`modalOpen`** (or a descriptive name like `guidelinesOpen`, `privacyPolicyOpen`) `useState(false)`.
+- **`guidelinesOpen`** (or a descriptive name like `privacyPolicyOpen`, `termsOpen`) `useState(false)`.
 - **Body scroll lock** while open: set `document.body.style.overflow = 'hidden'` in a `useEffect` when open, restore on cleanup.
 - **Escape to close**: `useEffect` that listens for `keydown` on `window` and closes when `e.key === 'Escape'`, cleanup on unmount or when closed.
 
@@ -98,27 +98,31 @@ Use this section to **replicate the same popup** in another project. Implementat
 
 ### PDF file and URL constant
 
-Replace the filename with your own PDF:
+PremiumCare Enrollment points the **Sedera Guidelines** modal at the privacy-policy PDF on disk:
+
+- On disk: **`public/assets/Sedera HealthShare Privacy Policy.pdf`**
+- Constant used in code:
 
 ```ts
-const DOC_PDF = `/assets/${encodeURIComponent('Sedera HealthShare Privacy Policy.pdf')}`;
+const GUIDELINES_PDF = `/assets/${encodeURIComponent('Sedera HealthShare Privacy Policy.pdf')}`;
 ```
 
 If you rename the file, change both the `public/assets/...` path and the string inside `encodeURIComponent(...)`.
+For a different project, swap the filename and constant name to match your document.
 
 **Dependencies:** [lucide-react](https://lucide.dev/) — `FileText` (opener button), `X` (close), `ExternalLink` ("Open in new tab").
 
 ### State + effects (body lock and Escape)
 
-Replace `modalOpen` / `setModalOpen` with a descriptive name for your document (e.g. `guidelinesOpen`, `privacyPolicyOpen`).
+Replace `guidelinesOpen` / `setGuidelinesOpen` with a descriptive name for your document if different (e.g. `privacyPolicyOpen`, `termsOpen`).
 
 ```ts
-const [modalOpen, setModalOpen] = useState(false);
+const [guidelinesOpen, setGuidelinesOpen] = useState(false);
 
 useEffect(() => {
-  if (!modalOpen) return;
+  if (!guidelinesOpen) return;
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') setModalOpen(false);
+    if (e.key === 'Escape') setGuidelinesOpen(false);
   };
   const prevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
@@ -127,7 +131,7 @@ useEffect(() => {
     document.body.style.overflow = prevOverflow;
     window.removeEventListener('keydown', onKeyDown);
   };
-}, [modalOpen]);
+}, [guidelinesOpen]);
 ```
 
 ### Open button (same label as the dialog title)
@@ -135,43 +139,43 @@ useEffect(() => {
 ```tsx
 <button
   type="button"
-  onClick={() => setModalOpen(true)}
+  onClick={() => setGuidelinesOpen(true)}
   className="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg"
 >
   <FileText className="w-5 h-5" />
-  Your Document Title
+  Sedera Guidelines
 </button>
 ```
 
 ### Full modal markup (drop-in)
 
-Customize: `DOC_PDF`, `modalOpen` / `setModalOpen`, the `id` and `aria-labelledby` pair, the `<h2>` title text, the iframe `title`, and the `aria-label` on the close button.
+For a different document, customize: `GUIDELINES_PDF`, `guidelinesOpen` / `setGuidelinesOpen`, the `id` and `aria-labelledby` pair, the `<h2>` title text, the iframe `title`, and the `aria-label` on the close button.
 
 ```tsx
-{modalOpen && (
+{guidelinesOpen && (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4">
     <div
       role="presentation"
       className="absolute inset-0 bg-black/50"
-      onClick={() => setModalOpen(false)}
+      onClick={() => setGuidelinesOpen(false)}
     />
     <div
       className="relative z-10 flex h-[722px] max-h-[90vh] w-[896px] max-w-[min(896px,calc(100vw-1rem))] min-h-0 flex-col overflow-hidden rounded-lg bg-white shadow-xl"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="doc-modal-title"
+      aria-labelledby="guidelines-title"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
         <h2
-          id="doc-modal-title"
+          id="guidelines-title"
           className="pr-2 text-lg font-semibold text-gray-900 sm:text-xl"
         >
-          Your Document Title
+          Sedera Guidelines
         </h2>
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <a
-            href={DOC_PDF}
+            href={GUIDELINES_PDF}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-blue-800 hover:bg-blue-50"
@@ -181,9 +185,9 @@ Customize: `DOC_PDF`, `modalOpen` / `setModalOpen`, the `id` and `aria-labelledb
           </a>
           <button
             type="button"
-            onClick={() => setModalOpen(false)}
+            onClick={() => setGuidelinesOpen(false)}
             className="shrink-0 rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
-            aria-label="Close document"
+            aria-label="Close guidelines"
           >
             <X className="h-5 w-5" />
           </button>
@@ -191,8 +195,8 @@ Customize: `DOC_PDF`, `modalOpen` / `setModalOpen`, the `id` and `aria-labelledb
       </div>
       <div className="min-h-0 flex-1 overflow-hidden p-2 sm:p-3">
         <iframe
-          title="Your Document Title PDF"
-          src={DOC_PDF}
+          title="Sedera Guidelines PDF"
+          src={GUIDELINES_PDF}
           className="h-full w-full rounded border border-gray-200"
         />
       </div>
