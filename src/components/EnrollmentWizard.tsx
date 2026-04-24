@@ -25,6 +25,61 @@ interface ApiResponse {
   };
 }
 
+/** MEC success-only PDF retention: matches docs/PDF retained.md */
+type EnrollmentJsonEval =
+  | { kind: 'success'; memberId: string | null }
+  | { kind: 'failure'; response: ApiResponse };
+
+function evaluateEnrollmentFromJson(data: any, res: Response): EnrollmentJsonEval {
+  const txVal = data.data?.TRANSACTION?.SUCCESS;
+  const topVal = data.data?.SUCCESS;
+
+  const transactionFailed =
+    txVal === false ||
+    txVal === 'false' ||
+    (typeof txVal === 'string' && txVal.toLowerCase() === 'false');
+
+  const topLevelFailed =
+    topVal === false ||
+    topVal === 'false' ||
+    (typeof topVal === 'string' && topVal.toLowerCase() === 'false');
+
+  if (transactionFailed || topLevelFailed) {
+    return { kind: 'failure', response: data };
+  }
+
+  const transactionSuccess =
+    !transactionFailed &&
+    (txVal === true ||
+      txVal === 'true' ||
+      (typeof txVal === 'string' && txVal.toLowerCase() === 'true'));
+
+  const hasSuccessFlag =
+    !transactionFailed &&
+    data.success === true &&
+    (topVal === 'true' ||
+      (typeof topVal === 'string' && topVal.toLowerCase() === 'true'));
+
+  const enrollmentSuccess =
+    (transactionSuccess || hasSuccessFlag) && !transactionFailed;
+
+  if (!enrollmentSuccess) {
+    return {
+      kind: 'failure',
+      response: {
+        success: false,
+        status: data.status || res.status,
+        data: data.data,
+        error: 'Enrollment could not be confirmed',
+        message: 'The enrollment response was ambiguous. Please contact support.',
+      },
+    };
+  }
+
+  const memberId = data.data?.MEMBER?.ID?.toString() || null;
+  return { kind: 'success', memberId };
+}
+
 interface EnrollmentWizardProps {
   benefitId: string | null;
   onBenefitIdChange: (benefitId: string) => void;
@@ -801,47 +856,13 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
           const data = await res.json();
 
           if (res.ok || res.status === 400) {
-            const txVal = data.data?.TRANSACTION?.SUCCESS;
-            const topVal = data.data?.SUCCESS;
-
-            const txFailed =
-              txVal === false ||
-              txVal === "false" ||
-              (typeof txVal === 'string' && txVal.toLowerCase() === 'false');
-
-            const topLevelFailed =
-              topVal === false ||
-              topVal === "false" ||
-              (typeof topVal === 'string' && topVal.toLowerCase() === 'false');
-
-            if (txFailed || topLevelFailed) {
-              enrollmentResponseData = data;
+            const evalResult = evaluateEnrollmentFromJson(data, res);
+            if (evalResult.kind === 'failure') {
+              enrollmentResponseData = evalResult.response;
               break;
             }
-
-            const txConfirmed =
-              txVal === true ||
-              txVal === "true" ||
-              (typeof txVal === 'string' && txVal.toLowerCase() === 'true');
-
-            const topConfirmed =
-              data.success === true &&
-              (topVal === "true" ||
-                (typeof topVal === 'string' && topVal.toLowerCase() === 'true'));
-
-            if (!txConfirmed && !topConfirmed) {
-              enrollmentResponseData = {
-                success: false,
-                status: data.status || res.status,
-                data: data.data,
-                error: 'Enrollment could not be confirmed',
-                message: 'The enrollment response was ambiguous. Please contact support.',
-              };
-              break;
-            }
-
             enrollmentSuccess = true;
-            extractedMemberId = data.data?.MEMBER?.ID?.toString() || null;
+            extractedMemberId = evalResult.memberId;
             setMemberId(extractedMemberId);
             break;
           }
@@ -878,20 +899,29 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         }
       }
 
-      if (enrollmentSuccess) {
-        try {
-          await generateAndUploadPDF(extractedMemberId);
-        } catch {
-        }
-
-        setShowThankYou(true);
-        clearStorage();
-        sendAdvisorNotification(agentParam).catch(() => {});
-      } else {
-        setResponse(enrollmentResponseData);
+      if (!enrollmentSuccess) {
+        setResponse(
+          enrollmentResponseData ?? {
+            success: false,
+            status: 500,
+            error: 'Enrollment failed',
+            message: 'An unexpected error occurred. Please try again.',
+          },
+        );
         clearFormDataOnly();
+        setLoading(false);
+        return;
       }
 
+      try {
+        await generateAndUploadPDF(extractedMemberId);
+      } catch {
+        // Intentionally swallow: never block the success UI on a storage failure.
+      }
+
+      setShowThankYou(true);
+      clearStorage();
+      sendAdvisorNotification(agentParam).catch(() => {});
       setLoading(false);
     } finally {
       sessionStorage.removeItem('form_submitting');
@@ -983,12 +1013,14 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         lastName: formData.lastName,
         benefitId: formData.benefitId,
         enrollmentDate: new Date().toISOString(),
+        enrollmentMemberId,
       }));
 
       const pdfResponse = await fetch(pdfApiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': supabaseKey,
           'Cache-Control': 'no-cache, no-store',
         },
         cache: 'no-store',
