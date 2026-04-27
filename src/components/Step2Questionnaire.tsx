@@ -1,6 +1,7 @@
 import { FileText, ArrowLeft, PenTool, X, ExternalLink } from 'lucide-react';
 import { FormData } from '../hooks/useEnrollmentStorage';
 import { useRef, useState, useEffect } from 'react';
+import { TermsAndConditionsFormatted } from './TermsAndConditionsFormatted';
 
 interface QuestionnaireAnswers {
   zionPrinciplesAccept: string;
@@ -18,6 +19,7 @@ interface QuestionnaireAnswers {
   primaryMedicalTreatments: string;
   spouseMedicalConditions: string;
   medicalCostSharingAuth: boolean;
+  termsAndConditionsAccept: boolean;
   signatureData: string;
   typedSignature: string;
   referral: string;
@@ -28,7 +30,7 @@ interface Step2QuestionnaireProps {
   errors: Record<string, string>;
   onNext: () => void;
   onBack: () => void;
-  onQuestionnaireChange: (field: keyof QuestionnaireAnswers, value: string) => void;
+  onQuestionnaireChange: (field: keyof QuestionnaireAnswers, value: string | boolean) => void;
 }
 
 export default function Step2Questionnaire({
@@ -81,6 +83,10 @@ export default function Step2Questionnaire({
 
   const handleRadioChange = (field: keyof QuestionnaireAnswers, value: string) => {
     onQuestionnaireChange(field, value);
+  };
+
+  const handleTermsCheckboxChange = (checked: boolean) => {
+    onQuestionnaireChange('termsAndConditionsAccept', checked);
   };
 
   const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -616,7 +622,7 @@ export default function Step2Questionnaire({
                 type="checkbox"
                 name="medicalCostSharingAuth"
                 checked={answers.medicalCostSharingAuth}
-                onChange={(e) => onQuestionnaireChange('medicalCostSharingAuth', e.target.checked as any)}
+                onChange={(e) => onQuestionnaireChange('medicalCostSharingAuth', e.target.checked)}
                 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
               />
               <span className="text-sm text-gray-700">
@@ -625,6 +631,38 @@ export default function Step2Questionnaire({
             </label>
             {errors.medicalCostSharingAuth && (
               <p className="mt-2 text-sm text-red-500">{errors.medicalCostSharingAuth}</p>
+            )}
+          </div>
+
+          <div className="border-t border-gray-200 pt-6 space-y-4">
+            <p className="font-semibold text-gray-900">
+              Terms and Conditions
+              <span className="text-red-500 ml-1">*</span>
+            </p>
+            <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-4">
+              <div
+                role="region"
+                aria-label="Terms and Conditions full text"
+                className="max-h-[min(17.5rem,42vh)] sm:max-h-[min(18rem,40vh)] overflow-y-auto overflow-x-hidden overscroll-y-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
+              >
+                <TermsAndConditionsFormatted />
+              </div>
+            </div>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="termsAndConditionsAccept"
+                checked={answers.termsAndConditionsAccept}
+                onChange={(e) => handleTermsCheckboxChange(e.target.checked)}
+                className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+              />
+              <span className="text-sm text-gray-700">
+                I have read and accept the Terms and Conditions
+              </span>
+            </label>
+            {errors.termsAndConditionsAccept && (
+              <p className="mt-2 text-sm text-red-500">{errors.termsAndConditionsAccept}</p>
             )}
           </div>
         </div>

@@ -3,6 +3,11 @@ import autoTable from 'jspdf-autotable';
 import { FormData } from '../hooks/useEnrollmentStorage';
 import { maskSSN, maskCardNumber, maskRoutingNumber, maskAccountNumber } from './maskingUtils';
 import { TOBACCO_MONTHLY_FEE_USD } from '../constants/pricing';
+import {
+  TERMS_AND_CONDITIONS_PARAGRAPHS,
+  TERMS_FULL_BOLD_EXACT,
+  isTermsShortColonHeading,
+} from '../constants/termsAndConditionsEnrollment';
 
 async function loadImageAsBase64(imagePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -23,6 +28,72 @@ async function loadImageAsBase64(imagePath: string): Promise<string> {
     img.onerror = () => reject(new Error('Failed to load image'));
     img.src = imagePath;
   });
+}
+
+/** Terms body: same paragraph + bold rules as TermsAndConditionsFormatted; returns next Y (pt). */
+function appendTermsBlocksToPdf(
+  doc: jsPDF,
+  paragraphs: readonly string[],
+  yStart: number,
+  pageWidth: number,
+  pageHeight: number,
+  marginX: number,
+  bottomMargin: number,
+  fontSize: number,
+  lineHeightPt: number
+): number {
+  const contentWidth = pageWidth - marginX * 2;
+
+  function appendWrappedSegment(text: string, bold: boolean, y: number): number {
+    if (!text) return y;
+    doc.setFontSize(fontSize);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    const lines = doc.splitTextToSize(text, contentWidth);
+    let yy = y;
+    for (const line of lines) {
+      if (yy > pageHeight - bottomMargin) {
+        doc.addPage();
+        yy = 20;
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      }
+      doc.text(line, marginX, yy);
+      yy += lineHeightPt;
+    }
+    return yy;
+  }
+
+  let y = yStart;
+
+  for (const para of paragraphs) {
+    if (TERMS_FULL_BOLD_EXACT.has(para)) {
+      y = appendWrappedSegment(para, true, y);
+      continue;
+    }
+    if (isTermsShortColonHeading(para)) {
+      y = appendWrappedSegment(para, true, y);
+      continue;
+    }
+    if (para.startsWith('For example:')) {
+      y = appendWrappedSegment('For example:', true, y);
+      y = appendWrappedSegment(para.slice('For example:'.length), false, y);
+      continue;
+    }
+    if (para.startsWith('11A.')) {
+      y = appendWrappedSegment('11A.', true, y);
+      y = appendWrappedSegment(para.slice(4), false, y);
+      continue;
+    }
+    const numbered = para.match(/^(\d{1,2}\.\s[^.]+\.)([\s\S]*)$/);
+    if (numbered) {
+      y = appendWrappedSegment(numbered[1], true, y);
+      y = appendWrappedSegment(numbered[2], false, y);
+      continue;
+    }
+    y = appendWrappedSegment(para, false, y);
+  }
+
+  return y;
 }
 
 export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
@@ -357,6 +428,10 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
     ...(hasSpouse ? [['Spouse\'s Medical Conditions *\n\nHas the primary member\'s spouse experienced symptoms of, been diagnosed with, or been treated for any condition within the past 24 months?\n\nAdd conditions below. For multiple conditions, please add one per line. (If there are no conditions present, enter NA)', formData.questionnaireAnswers.spouseMedicalConditions || 'N/A']] : []),
     [medicalCostSharingAuthBlock, formData.questionnaireAnswers.medicalCostSharingAuth ? 'YES' : 'NO'],
     [
+      'Terms and Conditions — Applicant read and accepted the full text presented in the questionnaire',
+      formData.questionnaireAnswers.termsAndConditionsAccept ? 'YES' : 'NO',
+    ],
+    [
       'Referral (optional)\n\nAdd A Referral Or Leave It Blank',
       (formData.questionnaireAnswers.referral || '').trim() || 'None provided',
     ],
@@ -382,15 +457,21 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
 
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text('Terms and Conditions for CARE PLUS', 14, yPosition);
-  yPosition += 7;
+  doc.text('Terms and Conditions — Premium Care Enrollment', 14, yPosition);
+  yPosition += 8;
 
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  const termsText = 'Medical Cost Sharing is not insurance or an insurance policy nor is it offered through an insurance company. Medical Cost Sharing is not a discount healthcare program nor a discount health card program. Whether anyone chooses to assist you with your medical bills will be totally voluntary, as neither the organization nor any other member is liable for or may be compelled to make the payment of your medical bill. As such, medical cost sharing should never be considered to be insurance. Whether you receive any amounts for medical expenses and whether or not medical cost sharing continues to operate, you are always personally responsible for the payment of your own medical bills. Medical Cost Sharing is not subject to the regulatory requirements or consumer protections of your particular State\'s Insurance Code or Statutes.';
-  const termsLines = doc.splitTextToSize(termsText, pageWidth - 28);
-  doc.text(termsLines, 14, yPosition);
-  yPosition += (termsLines.length * 5) + 10;
+  yPosition = appendTermsBlocksToPdf(
+    doc,
+    TERMS_AND_CONDITIONS_PARAGRAPHS,
+    yPosition,
+    pageWidth,
+    pageHeight,
+    14,
+    22,
+    9,
+    4.5
+  );
+  yPosition += 10;
 
   if (yPosition > pageHeight - 60) {
     doc.addPage();

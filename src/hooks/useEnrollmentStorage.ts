@@ -60,6 +60,7 @@ export interface QuestionnaireAnswers {
   primaryMedicalTreatments: string;
   spouseMedicalConditions: string;
   medicalCostSharingAuth: boolean;
+  termsAndConditionsAccept: boolean;
   signatureData: string;
   typedSignature: string;
   referral: string;
@@ -161,6 +162,7 @@ const createDefaultFormData = (benefitId: string | null, agentId: string = ''): 
       primaryMedicalTreatments: '',
       spouseMedicalConditions: '',
       medicalCostSharingAuth: false,
+      termsAndConditionsAccept: false,
       signatureData: '',
       typedSignature: '',
       referral: '',

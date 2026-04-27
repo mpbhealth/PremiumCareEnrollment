@@ -483,6 +483,9 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
     if (!answers.primaryMemberConditionsPast36Mo?.trim())
       newErrors.primaryMemberConditionsPast36Mo = 'This field is required';
     if (!answers.medicalCostSharingAuth) newErrors.medicalCostSharingAuth = 'You must acknowledge and agree to the authorization';
+    if (!answers.termsAndConditionsAccept) {
+      newErrors.termsAndConditionsAccept = 'You must read and accept the Terms and Conditions';
+    }
 
     if (!answers.signatureData && !answers.typedSignature.trim()) {
       newErrors.signatureData = 'Please provide either a drawn signature or typed name';
@@ -676,7 +679,7 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
     }
   };
 
-  const handleQuestionnaireChange = (field: keyof QuestionnaireAnswers, value: string) => {
+  const handleQuestionnaireChange = (field: keyof QuestionnaireAnswers, value: string | boolean) => {
     const updatedAnswers = { ...formData.questionnaireAnswers, [field]: value };
     saveFormData({ ...formData, questionnaireAnswers: updatedAnswers });
 
