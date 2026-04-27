@@ -244,13 +244,18 @@ async function insertPremiumCareLogSafe(
       externalHttpStatus: params.externalHttpStatus,
       fetchError: params.fetchErrorMessage,
       transactionSuccess,
-      externalResponse: params.externalResponse ?? null,
     };
+
+    const responseText =
+      params.externalResponse !== undefined && params.externalResponse !== null
+        ? JSON.stringify(params.externalResponse)
+        : null;
 
     const { error } = await supabase.from("premiumCare_log").insert({
       log: JSON.stringify(logObj),
       request_payload: requestPayload,
       payload_size_bytes: payloadSizeBytes,
+      response: responseText,
     });
     if (error) {
       console.error("[premiumCare_log] insert failed:", error.message);
