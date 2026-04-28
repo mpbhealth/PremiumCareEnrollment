@@ -354,8 +354,8 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
 
   const sederaPrinciplesBlock =
     'Membership Principles\n\n' +
-    'Understanding Sedera Principles of Membership\n\n' +
-    'I/We commit to living according to the Sedera Member Principles, including:\n\n' +
+    'Understanding Premium Care Principles of Membership\n\n' +
+    'I/we commit to living according to the Sedera (Sharing Organization) Membership Principles, including:\n\n' +
     '• Acting with honesty, integrity, and ethical behavior.\n' +
     '• Supporting fellow members through voluntary sharing of medical costs whenever possible.\n' +
     '• Maintaining personal accountability and acting as good stewards of community resources.\n' +
