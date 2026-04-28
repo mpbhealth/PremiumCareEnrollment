@@ -189,6 +189,7 @@ export default function Step1PersonalInfo({
         appliedPromo={formData.appliedPromo}
         onPromoCodeChange={onPromoCodeChange}
         onAppliedPromoChange={onAppliedPromoChange}
+        pdid={formData.pdid}
       />
 
       <div className="pt-6">

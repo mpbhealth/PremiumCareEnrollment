@@ -20,6 +20,8 @@ interface EnrollmentSummaryProps {
   appliedPromo: AppliedPromo | null;
   onPromoCodeChange: (code: string) => void;
   onAppliedPromoChange: (promo: AppliedPromo | null) => void;
+  /** Enrollment PDID for promocode product scope (see docs/promocode.md). */
+  pdid: number;
 }
 
 const planOptions: Record<string, { value: string; label: string; memberOnlyPrice?: number; plusOnePrice?: number; childrenPrice?: number }[]> = {
@@ -43,6 +45,7 @@ export default function EnrollmentSummary({
   appliedPromo,
   onPromoCodeChange,
   onAppliedPromoChange,
+  pdid,
 }: EnrollmentSummaryProps) {
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [promoError, setPromoError] = useState<string>('');
@@ -59,7 +62,7 @@ export default function EnrollmentSummary({
     setIsValidatingPromo(true);
     setPromoError('');
 
-    const result = await validatePromoCode(promoCode);
+    const result = await validatePromoCode(promoCode, { pdid });
 
     setIsValidatingPromo(false);
 

@@ -8,6 +8,32 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey, Cache-Control",
 };
 
+/** Keep in sync with src/constants/promo.ts DEFAULT_PROMO_PDID */
+const DEFAULT_ENROLLMENT_PDID = 43957;
+
+function escapePromoCodeForILike(trimmed: string): string {
+  return trimmed
+    .replace(/\\/g, "\\\\")
+    .replace(/%/g, "\\%")
+    .replace(/_/g, "\\_");
+}
+
+function getEffectivePromoPdid(pdid: number | undefined): number {
+  return typeof pdid === "number" && pdid > 0 ? pdid : DEFAULT_ENROLLMENT_PDID;
+}
+
+function promoProductAppliesToPdid(
+  rowProduct: string | null | undefined,
+  effectivePdid: number,
+): boolean {
+  const raw = rowProduct == null ? "" : String(rowProduct).trim();
+  if (raw.length === 0) return true;
+  const u = raw.toUpperCase();
+  if (u === "*" || u === "ALL" || u === "ANY") return true;
+  const expected = String(effectivePdid);
+  return raw === expected || raw.toUpperCase() === expected.toUpperCase();
+}
+
 function decryptPassword(encryptedPassword: string): string {
   try {
     const secretKey = Deno.env.get("VITE_ENCRYPTION_SECRET_KEY");
@@ -641,26 +667,34 @@ Deno.serve(async (req: Request) => {
 
     let enrollmentFeeAmount = "100.00";
 
-    if (requestData.promoCode && requestData.promoCode.trim() !== '') {
-      const normalizedPromoCode = requestData.promoCode.trim().toUpperCase();
+    const effectivePromoPdid = getEffectivePromoPdid(requestData.pdid);
+
+    if (requestData.promoCode && requestData.promoCode.trim() !== "") {
+      const trimmedPromo = requestData.promoCode.trim();
 
       try {
-        const { data: promoData, error: promoError } = await supabase
-          .from('promocodes')
-          .select('discount_amount')
-          .eq('code', normalizedPromoCode)
-          .eq('active', true)
-          .maybeSingle();
+        const pattern = escapePromoCodeForILike(trimmedPromo);
+        const { data: promoRows, error: promoError } = await supabase
+          .from("promocodes")
+          .select("discount_amount, product")
+          .ilike("code", pattern)
+          .eq("active", true)
+          .limit(1);
 
-        if (!promoError && promoData) {
-          const discountAmount = parseFloat(promoData.discount_amount);
+        const promoData = promoRows?.[0];
+        if (
+          !promoError &&
+          promoData &&
+          promoProductAppliesToPdid(promoData.product, effectivePromoPdid)
+        ) {
+          const discountAmount = parseFloat(String(promoData.discount_amount));
 
           if (!isNaN(discountAmount) && discountAmount >= 0) {
-            const calculatedFee = Math.max(0, 100.00 - discountAmount);
+            const calculatedFee = Math.max(0, 100.0 - discountAmount);
             enrollmentFeeAmount = calculatedFee.toFixed(2);
           }
         }
-      } catch (error) {
+      } catch (_error) {
       }
     }
 
@@ -709,7 +743,7 @@ Deno.serve(async (req: Request) => {
       })),
       PRODUCTS: [
         {
-          PDID: (requestData.pdid && requestData.pdid > 0) ? requestData.pdid : 43957,
+          PDID: (requestData.pdid && requestData.pdid > 0) ? requestData.pdid : DEFAULT_ENROLLMENT_PDID,
           BENEFITID: parseInt(requestData.benefitId),
           periodid: 1,
           dtEffective: formatDateToMMDDYYYY(requestData.effectiveDate),
