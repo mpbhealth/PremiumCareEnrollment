@@ -41,14 +41,14 @@ Reference migration shape:
 | Column | Notes |
 |--------|--------|
 | `id` | UUID PK |
-| `code` | **UNIQUE** — each promo string appears once (different codes can share the same `product`). |
+| `code` | Display string; **unique per `(code, product)`** — composite index `promocodes_lower_code_product_uidx` on `(lower(btrim(code)), product)` allows the same textual code scoped to different PDIDs. |
 | `product` | **Not unique.** Stores the product scope: typically **`"<PDID>"`** as text (e.g. `"43957"` for Premium Care). See wildcards below. |
 | `discount_amount` | Non-negative numeric; dollars subtracted from initial payment. |
 | `active` | Boolean; only `active = true` rows participate in validation. |
 
 **RLS:** Policy that allows **anonymous `SELECT`** for rows with `active = true` is typical so the browser can validate without a logged-in user. Inserts/updates remain admin-only.
 
-**Indexes:** Unique on `code`; optional index on `active`.
+**Indexes:** Composite unique `(lower(btrim(code)), product)` — see `supabase/migrations/20260428120000_promocodes_unique_code_per_product.sql`; optional index on `active`.
 
 ---
 
@@ -65,7 +65,7 @@ A promocode row **matches** the enrollment when:
 1. **`product` is empty**, or equals (case-insensitive) **`*`**, **`ALL`**, or **`ANY`** → code applies to any enrollment (wildcard rows).
 2. Otherwise **`product`** (normalized) must equal **`String(effective_pdid)`** (normalized).
 
-**Multiple codes per product:** Many rows may use the same `product` value (same PDID). **`code` stays unique** across the table.
+**Multiple codes per product:** Many rows may use the same `product` value (same PDID). **`code` is unique per `product`** (same displayed code may repeat for another PDID scope).
 
 ---
 
@@ -89,11 +89,9 @@ function escapePromoCodeForILike(trimmed: string): string {
 - `from('promocodes').select('code, product, discount_amount')`
 - `.ilike('code', escapePromoCodeForILike(trimmedUserInput))`
 - `.eq('active', true)`
-- `.limit(1)`
+- `.limit(50)` (bounded), then pick the first row where **`promoProductAppliesToPdid(row.product, effective_pdid)`** (same rule as the Edge function).
 
-Use **`limit(1)`** instead of **`maybeSingle()`** if your PostgREST stack misbehaves on zero-or-many rows.
-
-If no row → **invalid code**. If row exists → proceed to product match.
+If no rows → **invalid code**. If rows exist but none match product scope → **not valid for this enrollment product**.
 
 ---
 
@@ -188,8 +186,7 @@ Implement promocode validation per docs/promocode.md pattern:
 | Step 1 wiring | `src/components/Step1PersonalInfo.tsx` |
 | Default form `pdid` | `src/hooks/useEnrollmentStorage.ts` |
 | Edge validation | `supabase/functions/enrollment-api-premiumcare/index.ts` (`DEFAULT_ENROLLMENT_PDID`, `ilike`, product match) |
-| Migration | `supabase/migrations/20260123163522_create_promocodes_table.sql` |
+| Migration (create table) | `supabase/migrations/20260123163522_create_promocodes_table.sql` |
+| Migration (composite unique on code + product) | `supabase/migrations/20260428120000_promocodes_unique_code_per_product.sql` |
 
 ---
-
-*Last aligned with Premium Care Enrollment: PDID **43957**, PDID-only product matching, `ilike` + escape, server parity on submit.*

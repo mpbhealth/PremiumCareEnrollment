@@ -679,14 +679,12 @@ Deno.serve(async (req: Request) => {
           .select("discount_amount, product")
           .ilike("code", pattern)
           .eq("active", true)
-          .limit(1);
+          .limit(50);
 
-        const promoData = promoRows?.[0];
-        if (
-          !promoError &&
-          promoData &&
-          promoProductAppliesToPdid(promoData.product, effectivePromoPdid)
-        ) {
+        const promoData = promoRows?.find((r) =>
+          promoProductAppliesToPdid(r.product, effectivePromoPdid)
+        );
+        if (!promoError && promoData) {
           const discountAmount = parseFloat(String(promoData.discount_amount));
 
           if (!isNaN(discountAmount) && discountAmount >= 0) {

@@ -50,12 +50,12 @@ export async function validatePromoCode(
 
   try {
     const pattern = escapePromoCodeForILike(trimmed);
-    const { data, error } = await supabase
+    const { data: rows, error } = await supabase
       .from('promocodes')
       .select('code, product, discount_amount')
       .ilike('code', pattern)
       .eq('active', true)
-      .limit(1);
+      .limit(50);
 
     if (error) {
       console.error('Error validating promo code:', error);
@@ -65,15 +65,16 @@ export async function validatePromoCode(
       };
     }
 
-    const row = data?.[0];
-    if (!row) {
+    const row = rows?.find((r) => promoProductAppliesToPdid(r.product, effectivePdid));
+
+    if (!rows?.length) {
       return {
         success: false,
         error: 'Invalid promo code',
       };
     }
 
-    if (!promoProductAppliesToPdid(row.product, effectivePdid)) {
+    if (!row) {
       return {
         success: false,
         error: 'This promo code is not valid for this enrollment product',
