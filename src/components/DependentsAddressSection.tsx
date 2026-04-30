@@ -2,6 +2,10 @@ import { Users, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { Dependent } from '../hooks/useEnrollmentStorage';
 import { formatPhoneNumber, formatSSN } from '../utils/formatters';
 import { getDependentEmailDuplicateError } from '../utils/dependentEmailValidation';
+import {
+  getDependentPhoneDuplicateError,
+  getDependentSsnDuplicateError,
+} from '../utils/dependentPhoneSsnDuplicateValidation';
 import { useState, useEffect } from 'react';
 
 interface DependentsAddressSectionProps {
@@ -13,6 +17,8 @@ interface DependentsAddressSectionProps {
     state: string;
     zipcode: string;
     email: string;
+    phone: string;
+    ssn: string;
   };
   errors?: Record<string, string>;
   onClearError?: (field: string) => void;
@@ -43,6 +49,62 @@ export default function DependentsAddressSection({
     });
     setUseSameAddress(initialState);
   }, [dependents]);
+
+  useEffect(() => {
+    if (dependents.length === 0 || selectedDependentIndex === null) return;
+
+    const mainPhone = subscriberAddress?.phone ?? '';
+    const mainSsn = subscriberAddress?.ssn ?? '';
+    const mainEmail = subscriberAddress?.email ?? '';
+
+    const idx = selectedDependentIndex;
+    const dep = dependents[idx];
+    if (!dep) return;
+
+    const depsSnapshot = dependents;
+
+    setLocalErrors((prev) => {
+      const next = { ...prev };
+
+      const emailDup = getDependentEmailDuplicateError(
+        dep.email ?? '',
+        idx,
+        depsSnapshot,
+        mainEmail
+      );
+      const keyEmail = `dependent_${idx}_email`;
+      if (emailDup) next[keyEmail] = emailDup;
+      else delete next[keyEmail];
+
+      const phoneDup = getDependentPhoneDuplicateError(
+        dep.phone ?? '',
+        idx,
+        depsSnapshot,
+        mainPhone
+      );
+      const keyPhone = `dependent_${idx}_phone`;
+      if (phoneDup) next[keyPhone] = phoneDup;
+      else delete next[keyPhone];
+
+      const ssnDup = getDependentSsnDuplicateError(
+        dep.ssn ?? '',
+        idx,
+        depsSnapshot,
+        mainSsn
+      );
+      const keySsn = `dependent_${idx}_ssn`;
+      if (ssnDup) next[keySsn] = ssnDup;
+      else delete next[keySsn];
+
+      return next;
+    });
+  }, [
+    subscriberAddress?.phone,
+    subscriberAddress?.ssn,
+    subscriberAddress?.email,
+    selectedDependentIndex,
+    dependents,
+  ]);
 
   // Parent (submit) errors first; local blur errors win for the same key
   const errors = { ...externalErrors, ...localErrors };
@@ -106,31 +168,48 @@ export default function DependentsAddressSection({
     });
   };
 
-  const validateDependent = (dependent: Dependent): boolean => {
-    const newErrors: Record<string, string> = {};
+  const handlePhoneBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (selectedDependentIndex === null) return;
+    const phoneValue = e.currentTarget.value;
+    const mainSubscriberPhone = subscriberAddress?.phone ?? '';
+    const dependentsForCheck = dependents.map((d, i) =>
+      i === selectedDependentIndex ? { ...d, phone: phoneValue } : d
+    );
+    const dup = getDependentPhoneDuplicateError(
+      phoneValue,
+      selectedDependentIndex,
+      dependentsForCheck,
+      mainSubscriberPhone
+    );
+    const key = `dependent_${selectedDependentIndex}_phone`;
+    setLocalErrors((prev) => {
+      const next = { ...prev };
+      if (dup) next[key] = dup;
+      else delete next[key];
+      return next;
+    });
+  };
 
-    if (!dependent.phone?.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else {
-      const phoneDigits = dependent.phone.replace(/\D/g, '');
-      if (phoneDigits.length !== 10) {
-        newErrors.phone = 'Phone number must be exactly 10 digits';
-      }
-    }
-
-    if (!dependent.ssn?.trim()) {
-      newErrors.ssn = 'Social Security number is required';
-    } else {
-      const ssnDigits = dependent.ssn.replace(/\D/g, '');
-      if (ssnDigits.length !== 9) {
-        newErrors.ssn = 'Social Security number must be exactly 9 digits';
-      }
-    }
-
-    if (!dependent.gender?.trim()) newErrors.gender = 'Gender is required';
-
-    setLocalErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleSsnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (selectedDependentIndex === null) return;
+    const ssnValue = e.currentTarget.value;
+    const mainSubscriberSsn = subscriberAddress?.ssn ?? '';
+    const dependentsForCheck = dependents.map((d, i) =>
+      i === selectedDependentIndex ? { ...d, ssn: ssnValue } : d
+    );
+    const dup = getDependentSsnDuplicateError(
+      ssnValue,
+      selectedDependentIndex,
+      dependentsForCheck,
+      mainSubscriberSsn
+    );
+    const key = `dependent_${selectedDependentIndex}_ssn`;
+    setLocalErrors((prev) => {
+      const next = { ...prev };
+      if (dup) next[key] = dup;
+      else delete next[key];
+      return next;
+    });
   };
 
   const handleDependentSelect = (index: number) => {
@@ -441,6 +520,7 @@ export default function DependentsAddressSection({
                       type="tel"
                       value={selectedDependent.phone || ''}
                       onChange={(e) => handleFieldChange('phone', e.target.value)}
+                      onBlur={handlePhoneBlur}
                       className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
                         errors[`dependent_${selectedDependentIndex}_phone`] ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -465,6 +545,7 @@ export default function DependentsAddressSection({
                         type={!showDepSSN && !supportsTextSecurity ? 'password' : 'text'}
                         value={selectedDependent.ssn || ''}
                         onChange={(e) => handleFieldChange('ssn', e.target.value)}
+                        onBlur={handleSsnBlur}
                         autoComplete="new-password"
                         style={!showDepSSN && supportsTextSecurity ? { WebkitTextSecurity: 'disc' } : undefined}
                         className={`w-full px-4 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${

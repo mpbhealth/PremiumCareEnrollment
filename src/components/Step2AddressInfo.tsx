@@ -8,6 +8,10 @@ import PreExistingConditionsSection from './PreExistingConditionsSection';
 import PaymentInformationSection from './PaymentInformationSection';
 import { applyPromoDiscount } from '../utils/promoCodeService';
 import { TOBACCO_MONTHLY_FEE_USD } from '../constants/pricing';
+import {
+  getPrimarySubscriberPhoneDuplicateError,
+  getPrimarySubscriberSsnDuplicateError,
+} from '../utils/dependentPhoneSsnDuplicateValidation';
 
 interface ApiResponse {
   success: boolean;
@@ -85,6 +89,25 @@ export default function Step2AddressInfo({
       smokerFee,
     };
   }, [formData.products, formData.appliedPromo, formData.smoker, formData.dependents]);
+
+  const subscriberPhoneDuplicate = useMemo(
+    () =>
+      formData.dependents.length > 0
+        ? getPrimarySubscriberPhoneDuplicateError(formData.phone, formData.dependents)
+        : null,
+    [formData.phone, formData.dependents]
+  );
+
+  const subscriberSsnDuplicate = useMemo(
+    () =>
+      formData.dependents.length > 0
+        ? getPrimarySubscriberSsnDuplicateError(formData.ssn, formData.dependents)
+        : null,
+    [formData.ssn, formData.dependents]
+  );
+
+  const phoneFieldError = errors.phone || subscriberPhoneDuplicate || '';
+  const ssnFieldError = errors.ssn || subscriberSsnDuplicate || '';
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value, formData.phone);
@@ -255,12 +278,12 @@ export default function Step2AddressInfo({
                 value={formData.phone}
                 onChange={handlePhoneChange}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                  errors.phone ? 'border-red-500' : 'border-gray-300'
+                  phoneFieldError ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="555-123-4567"
                 maxLength={12}
               />
-              {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+              {phoneFieldError && <p className="mt-1 text-sm text-red-500">{phoneFieldError}</p>}
             </div>
 
             <div>
@@ -276,7 +299,7 @@ export default function Step2AddressInfo({
                   autoComplete="new-password"
                   style={!showSSN && supportsTextSecurity ? { WebkitTextSecurity: 'disc' } : undefined}
                   className={`w-full px-4 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                    errors.ssn ? 'border-red-500' : 'border-gray-300'
+                    ssnFieldError ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="XXX-XX-XXXX"
                   maxLength={11}
@@ -290,7 +313,7 @@ export default function Step2AddressInfo({
                   {showSSN ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.ssn && <p className="mt-1 text-sm text-red-500">{errors.ssn}</p>}
+              {ssnFieldError && <p className="mt-1 text-sm text-red-500">{ssnFieldError}</p>}
             </div>
 
             <div>
@@ -356,6 +379,8 @@ export default function Step2AddressInfo({
             state: formData.state,
             zipcode: formData.zipcode,
             email: formData.email,
+            phone: formData.phone,
+            ssn: formData.ssn,
           }}
           errors={errors}
           onClearError={onClearError}
