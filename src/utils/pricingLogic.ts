@@ -267,10 +267,29 @@ export function getCoverageType(dependents: Dependent[]): 'Member Only' | 'Membe
   return 'Member + Family';
 }
 
-export function getCarePlusPricingOptions(memberDOB: string, dependents: Dependent[]): CarePlusPricingResult {
-  const age = calculateAgeFromDOB(memberDOB);
+/**
+ * Integer ages for everyone with a parseable DOB (primary + dependents). Missing DOBs are skipped.
+ * Dependent without DOB contributes nothing until entered. Someone 65+ is included and drives 18–64 gate via getAgeRange.
+ */
+function collectHouseholdAges(primaryDob: string, dependents: Dependent[]): number[] {
+  const ages: number[] = [];
+  const primaryAge = calculateAgeFromDOB(primaryDob);
+  if (primaryAge !== null) ages.push(primaryAge);
+  for (const dep of dependents) {
+    const a = calculateAgeFromDOB(dep.dob ?? '');
+    if (a !== null) ages.push(a);
+  }
+  return ages;
+}
 
-  if (age === null) {
+/**
+ * Premium Care (Care Plus) rate bands use the **oldest** enrolled age in the household (max of parseable DOBs),
+ * not the primary member’s age alone. Coverage row still comes from {@link getCoverageType}.
+ */
+export function getCarePlusPricingOptions(memberDOB: string, dependents: Dependent[]): CarePlusPricingResult {
+  const ages = collectHouseholdAges(memberDOB, dependents);
+
+  if (ages.length === 0) {
     return {
       options: [],
       isAvailable: false,
@@ -279,7 +298,8 @@ export function getCarePlusPricingOptions(memberDOB: string, dependents: Depende
     };
   }
 
-  const ageRange = getAgeRange(age);
+  const pricingAge = Math.max(...ages);
+  const ageRange = getAgeRange(pricingAge);
 
   if (!ageRange) {
     return {
