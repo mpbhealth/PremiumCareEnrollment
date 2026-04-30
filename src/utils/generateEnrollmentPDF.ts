@@ -8,6 +8,7 @@ import {
   TERMS_FULL_BOLD_EXACT,
   isTermsShortColonHeading,
 } from '../constants/termsAndConditionsEnrollment';
+import { formatEffectiveDateLongDisplay } from './dateCalculations';
 
 async function loadImageAsBase64(imagePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -134,12 +135,6 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
 
   const fullAddress = `${formData.address1}, ${formData.city}, ${formData.state} ${formData.zipcode}`;
 
-  const formatEffectiveDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-  };
-
   const memberInfo = [
     ['Name:', `${formData.firstName} ${formData.lastName}`],
     ['Address:', fullAddress],
@@ -149,7 +144,7 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
     ['Gender:', formData.gender],
     ['Smoker:', formData.smoker],
     ['SSN:', maskSSN(formData.ssn)],
-    ['Effective Date:', formatEffectiveDate(formData.effectiveDate)],
+    ['Effective Date:', formatEffectiveDateLongDisplay(formData.effectiveDate)],
     ['Benefit ID:', formData.benefitId],
   ];
 

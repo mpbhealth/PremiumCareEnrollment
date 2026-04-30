@@ -1,6 +1,6 @@
 import { MapPin, ArrowLeft, Loader2, XCircle, ChevronDown, ChevronUp, FileText, Receipt, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { FormData, Dependent, PaymentInfo } from '../hooks/useEnrollmentStorage';
-import { calculateEffectiveDates } from '../utils/dateCalculations';
+import { calculateEffectiveDates, formatEffectiveDateDisplay } from '../utils/dateCalculations';
 import { formatPhoneNumber, formatSSN } from '../utils/formatters';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import DependentsAddressSection from './DependentsAddressSection';
@@ -513,7 +513,7 @@ export default function Step2AddressInfo({
           <div>
             <p className="text-xs text-slate-500 mb-1">Effective Date</p>
             <p className="text-base font-semibold text-slate-800">
-              {formData.effectiveDate ? new Date(formData.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Not set'}
+              {formData.effectiveDate ? formatEffectiveDateDisplay(formData.effectiveDate) : 'Not set'}
             </p>
           </div>
         </div>
