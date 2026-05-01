@@ -242,6 +242,11 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         if (age !== null && age < 18) {
           newErrors[`${prefix}dob`] = 'Must be 18 years or older to enroll';
         }
+      } else if (dependent.relationship === 'Child') {
+        const age = calculateAgeFromDOB(dependent.dob);
+        if (age !== null && age >= 26) {
+          newErrors[`${prefix}dob`] = 'Child dependents must be under 26 years old';
+        }
       }
       if (!dependent.smoker.trim()) newErrors[`${prefix}smoker`] = 'Smoker status is required';
     });

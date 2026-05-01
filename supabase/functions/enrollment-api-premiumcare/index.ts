@@ -34,6 +34,30 @@ function promoProductAppliesToPdid(
   return raw === expected || raw.toUpperCase() === expected.toUpperCase();
 }
 
+/** Mirrors src/utils/pricingLogic.ts calculateAgeFromDOB (MM/DD/YYYY). Used for dependent age rules only. */
+function calculateAgeFromDobMmDdYyyy(dob: string): number | null {
+  if (!dob || dob.length !== 10) return null;
+  const [month, day, year] = dob.split("/").map((n) => parseInt(n, 10));
+  if (!month || !day || !year) return null;
+  const birthDate = new Date(year, month - 1, day);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+/** Keep messages in sync with EnrollmentWizard validateStep1 dependent DOB checks. */
+function dependentDobAgeValidationError(relationship: "Spouse" | "Child", dob: string): string | null {
+  const age = calculateAgeFromDobMmDdYyyy(dob);
+  if (age === null) return null;
+  if (relationship === "Spouse" && age < 18) return "Must be 18 years or older to enroll";
+  if (relationship === "Child" && age >= 26) return "Child dependents must be under 26 years old";
+  return null;
+}
+
 function decryptPassword(encryptedPassword: string): string {
   try {
     const secretKey = Deno.env.get("VITE_ENCRYPTION_SECRET_KEY");
@@ -502,6 +526,19 @@ Deno.serve(async (req: Request) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
+    }
+
+    for (const dep of requestData.dependents) {
+      const depAgeError = dependentDobAgeValidationError(dep.relationship, dep.dob);
+      if (depAgeError) {
+        return new Response(
+          JSON.stringify({ success: false, status: 400, error: depAgeError }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
     }
 
     if (!requestData.benefitId) {
