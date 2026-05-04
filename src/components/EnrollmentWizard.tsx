@@ -540,9 +540,11 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
       newErrors.termsAndConditionsAccept = 'You must read and accept the Terms and Conditions';
     }
 
-    if (!answers.signatureData && !answers.typedSignature.trim()) {
-      newErrors.signatureData = 'Please provide either a drawn signature or typed name';
-      newErrors.typedSignature = 'Please provide either a drawn signature or typed name';
+    if (!answers.signatureData?.trim()) {
+      newErrors.signatureData = 'Please draw your signature';
+    }
+    if (!answers.typedSignature.trim()) {
+      newErrors.typedSignature = 'Please type your full name';
     }
 
     setErrors(newErrors);

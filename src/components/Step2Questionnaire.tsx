@@ -790,6 +790,7 @@ export default function Step2Questionnaire({
             <div className="border-2 border-gray-300 rounded-lg overflow-hidden bg-white">
               <canvas
                 ref={canvasRef}
+                name="signatureData"
                 width={600}
                 height={200}
                 onMouseDown={startDrawing}
