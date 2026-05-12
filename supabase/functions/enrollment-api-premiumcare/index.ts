@@ -796,12 +796,16 @@ Deno.serve(async (req: Request) => {
         ACHROUTING: requestData.payment.achrouting,
         ACHACCOUNT: requestData.payment.achaccount,
         ACHBANK: requestData.payment.achbank,
+        FIRSTNAME: requestData.firstName,
+        LASTNAME: requestData.lastName,
       } : {
         CCEXPYEAR: requestData.payment.ccExpYear,
         PAYMENTTYPE: "CC",
         CCTYPE: requestData.payment.ccType,
         CCNUMBER: sanitizedCardNumber,
         CCEXPMONTH: requestData.payment.ccExpMonth,
+        FIRSTNAME: requestData.firstName,
+        LASTNAME: requestData.lastName,
       },
     };
 
