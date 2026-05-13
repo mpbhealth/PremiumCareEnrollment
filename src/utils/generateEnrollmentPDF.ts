@@ -391,6 +391,7 @@ export async function generateEnrollmentPDF(formData: FormData): Promise<Blob> {
   const maternityDeliveryNeedsBlock =
     'Maternity and Delivery Needs\n\n' +
     'I understand that maternity and delivery-related medical needs are subject to specific waiting periods and sharing limitations.\n\n' +
+    'Household Membership IUA: $1,250 (Standard Maternity IUA: $2,500)\n\n' +
     'These limitations may include:\n\n' +
     '• Waiting periods before maternity needs are eligible for sharing.\n' +
     '• Certain pre-existing conditions related to pregnancy may delay or exclude sharing.\n' +

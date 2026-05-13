@@ -486,6 +486,9 @@ export default function Step2Questionnaire({
               I understand that maternity and delivery-related medical needs are subject to specific waiting periods and sharing
               limitations.
             </p>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              Household Membership IUA: $1,250 (Standard Maternity IUA: $2,500)
+            </p>
             <p className="font-semibold text-gray-900 text-sm">These limitations may include:</p>
             <ul className="text-sm text-gray-700 list-disc list-inside space-y-2">
               <li>Waiting periods before maternity needs are eligible for sharing.</li>
