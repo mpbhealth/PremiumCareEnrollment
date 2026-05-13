@@ -9,6 +9,7 @@ import {
   getPrimarySubscriberPhoneDuplicateError,
   getPrimarySubscriberSsnDuplicateError,
 } from '../utils/dependentPhoneSsnDuplicateValidation';
+import { isChildDependentUnder18ForContactOptional } from '../utils/dependentAgeValidation';
 import { encryptSensitiveFields } from '../utils/payloadEncryption';
 import ProgressIndicator from './ProgressIndicator';
 import Step1PersonalInfo from './Step1PersonalInfo';
@@ -381,9 +382,16 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         }
       }
 
+      const skipContactRequired = isChildDependentUnder18ForContactOptional(
+        dependent.dob,
+        dependent.relationship
+      );
+
       if (!dependent.email?.trim()) {
-        newErrors[`${prefix}email`] = 'Email address is required';
-        hasError = true;
+        if (!skipContactRequired) {
+          newErrors[`${prefix}email`] = 'Email address is required';
+          hasError = true;
+        }
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dependent.email)) {
         newErrors[`${prefix}email`] = 'Email address must be valid';
         hasError = true;
@@ -400,8 +408,10 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         }
       }
       if (!dependent.phone?.trim()) {
-        newErrors[`${prefix}phone`] = 'Phone number is required';
-        hasError = true;
+        if (!skipContactRequired) {
+          newErrors[`${prefix}phone`] = 'Phone number is required';
+          hasError = true;
+        }
       } else {
         const phoneDigits = dependent.phone.replace(/\D/g, '');
         if (phoneDigits.length !== 10) {
@@ -421,8 +431,10 @@ export default function EnrollmentWizard({ benefitId, onBenefitIdChange, agentId
         }
       }
       if (!dependent.ssn?.trim()) {
-        newErrors[`${prefix}ssn`] = 'Social Security is required';
-        hasError = true;
+        if (!skipContactRequired) {
+          newErrors[`${prefix}ssn`] = 'Social Security is required';
+          hasError = true;
+        }
       } else {
         const ssnDigits = dependent.ssn.replace(/\D/g, '');
         if (ssnDigits.length !== 9) {
